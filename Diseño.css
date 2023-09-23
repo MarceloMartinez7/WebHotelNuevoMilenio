@@ -1,0 +1,56 @@
+.cabecera {
+    background-color: rgba(23, 23, 23, 255); /* Color de fondo  */
+    height: 80px; /* Altura de la franja en píxeles (ajusta según sea necesario) */
+    width: 100%; /* Ancho de la franja al 100% del contenedor */
+    color: white; /* Color del texto en la franja (opcional) */
+    
+}
+
+.icono {
+    background-image: url('./hotel.png');
+    background-size: 40px 40px; /* Ancho y alto de la imagen en píxeles */
+    width: 40px; /* Ancho de la imagen en píxeles */
+    height: 40px; /* Altura de la imagen en píxeles */
+    position: absolute; /* Establece la posición absoluta */
+    top: 30px; /* Ajusta la distancia desde la parte superior en píxeles */
+    left: 50px; /* Ajusta la distancia desde la izquierda en píxeles */
+}
+
+.titulo1 {
+    font-size: 30px;
+    position: fixed; /* Establece la posición relativa */
+    top: 25px; /* Ajusta la distancia desde la parte superior en píxeles */
+    left: 380px; /* Ajusta la distancia desde la izquierda en píxeles */
+    cursor: pointer;
+    transition: color 0.5s; /* Agrega una transición suave para el cambio de color */
+}
+.titulo1:hover {
+    color: #D4AF37; /* Color del texto cuando se pasa el cursor sobre él */
+}
+.titulo2 {
+    font-size: 30px;
+    position: fixed; /* Establece la posición relativa */
+    top: 25px; /* Ajusta la distancia desde la parte superior en píxeles */
+    left: 700px; /* Ajusta la distancia desde la izquierda en píxeles */
+    cursor: pointer;
+    transition: color 0.5s; /* Agrega una transición suave para el cambio de color */
+}
+.titulo2:hover {
+    color: #D4AF37; /* Color del texto cuando se pasa el cursor sobre él */
+}
+.titulo3 {
+    font-size: 30px;
+    position: fixed; /* Establece la posición relativa */
+    top: 25px; /* Ajusta la distancia desde la parte superior en píxeles */
+    left: 1100px; /* Ajusta la distancia desde la izquierda en píxeles */
+    cursor: pointer;
+    transition: color 0.5s; /* Agrega una transición suave para el cambio de color */
+}
+.titulo3:hover {
+    color: 	#D4AF37; /* Color del texto cuando se pasa el cursor sobre él */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
