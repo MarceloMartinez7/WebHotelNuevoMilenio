@@ -1,8 +1,10 @@
+
 .cabecera {
     background-color: rgba(23, 23, 23, 255); /* Color de fondo  */
     height: 80px; /* Altura de la franja en píxeles (ajusta según sea necesario) */
     width: 100%; /* Ancho de la franja al 100% del contenedor */
     color: white; /* Color del texto en la franja (opcional) */
+    border-radius: 0% 0% 0% 0%;
     
 }
 
@@ -15,6 +17,18 @@
     top: 30px; /* Ajusta la distancia desde la parte superior en píxeles */
     left: 50px; /* Ajusta la distancia desde la izquierda en píxeles */
 }
+
+.Primera_Imagen {
+    background-image: url(./HotelxdFondo.jpg);
+    background-position: center;
+    width: 100%; /* Cambiamos el ancho al 100% */
+    height: 85vh; /* Usamos el 100% de la altura de la ventana del navegador */
+    position: absolute;
+    top: 5;
+    left: 0;
+    background-size: cover; /* Hace que la imagen cubra toda la área sin repetirse */
+}
+
 
 .titulo1 {
     font-size: 30px;
@@ -50,7 +64,53 @@
     color: 	#D4AF37; /* Color del texto cuando se pasa el cursor sobre él */
 }
 
+
+
+
 body {
     margin: 0;
     padding: 0;
+}
+h1 {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    color: 	#d4af36;
+    font-size: 90px;
+    font-weight: 700;
+    text-align: center;
+    border-color: rgb(0, 0, 0);
+    text-shadow: 2px 2px 2px black; /* Sombra de texto con desplazamiento X, desplazamiento Y y color */
+}
+
+h2{
+    position: absolute;
+    top: 800px;
+    left: 650px;
+    color: #d4af36;
+    border-color: black;
+}
+
+.hotel-texto {
+    font-size: 40px;
+    position: absolute;
+    -webkit-text-stroke: 0.9px rgb(0, 0, 0); /* Borde de 1 píxel de ancho y color negro (para navegadores basados en WebKit) */
+    color: #d4af36; /* Color del texto */
+    right: 240px;
+    top: -40px;
+    white-space: nowrap; /* Evitar que el texto se divida en varias líneas */
+}
+
+
+.Descripcion {
+    text-align: center;
+    max-width: 800px; /* Ancho máximo del texto */
+    padding: 20px; /* Espaciado interno */
+    margin-left: -320px; /* Mueve el texto 100 píxeles desde el borde izquierdo */
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 18px;
+    color: black;
 }
