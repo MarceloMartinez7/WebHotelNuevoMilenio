@@ -1,12 +1,21 @@
 
 .cabecera {
-    background-color: rgba(23, 23, 23, 255); /* Color de fondo  */
+    background-color: rgb(33, 34, 34); /* Color de fondo  */
     height: 80px; /* Altura de la franja en píxeles (ajusta según sea necesario) */
     width: 100%; /* Ancho de la franja al 100% del contenedor */
     color: white; /* Color del texto en la franja (opcional) */
     border-radius: 0% 0% 0% 0%;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1.5px solid #ffffff;
     
 }
+
+
+
+
+
 
 .icono {
     background-image: url('./hotel.png');
@@ -19,7 +28,7 @@
 }
 
 .Primera_Imagen {
-    background-image: url(./HotelxdFondo.jpg);
+    background-image: url(./FondoHotelMIlenio.jpg);
     background-position: center;
     width: 100%; /* Cambiamos el ancho al 100% */
     height: 85vh; /* Usamos el 100% de la altura de la ventana del navegador */
@@ -34,7 +43,7 @@
     font-size: 30px;
     position: fixed; /* Establece la posición relativa */
     top: 25px; /* Ajusta la distancia desde la parte superior en píxeles */
-    left: 380px; /* Ajusta la distancia desde la izquierda en píxeles */
+    left: 390px; /* Ajusta la distancia desde la izquierda en píxeles */
     cursor: pointer;
     transition: color 0.5s; /* Agrega una transición suave para el cambio de color */
 }
@@ -45,7 +54,7 @@
     font-size: 30px;
     position: fixed; /* Establece la posición relativa */
     top: 25px; /* Ajusta la distancia desde la parte superior en píxeles */
-    left: 700px; /* Ajusta la distancia desde la izquierda en píxeles */
+    left: 720px; /* Ajusta la distancia desde la izquierda en píxeles */
     cursor: pointer;
     transition: color 0.5s; /* Agrega una transición suave para el cambio de color */
 }
@@ -70,6 +79,8 @@
 body {
     margin: 0;
     padding: 0;
+    
+    
 }
 h1 {
     position: absolute;
@@ -97,20 +108,114 @@ h2{
 .hotel-texto {
     font-size: 40px;
     position: absolute;
-    -webkit-text-stroke: 0.9px rgb(0, 0, 0); /* Borde de 1 píxel de ancho y color negro (para navegadores basados en WebKit) */
+    -webkit-text-stroke: 0.2px rgb(0, 0, 0); /* Borde de 1 píxel de ancho y color negro (para navegadores basados en WebKit) */
     color: #d4af36; /* Color del texto */
-    right: 240px;
-    top: -40px;
+    right: 300px;
+    top: -140px;
+    font-family: 'Times New Roman', Times, serif;
     white-space: nowrap; /* Evitar que el texto se divida en varias líneas */
+    cursor: default;
 }
 
 
 .Descripcion {
     text-align: center;
-    max-width: 800px; /* Ancho máximo del texto */
+    max-width: 900px; /* Ancho máximo del texto */
     padding: 20px; /* Espaciado interno */
     margin-left: -320px; /* Mueve el texto 100 píxeles desde el borde izquierdo */
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 18px;
-    color: black;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 17px;
+    color: rgb(255, 255, 255);
+    margin-top: -100px;
+    cursor: default;
+}
+
+.Franja_Enmedio{
+    background-color: rgba(23, 23, 23, 255); /* Color de fondo  */
+    height: 900px; /* Altura de la franja en píxeles (ajusta según sea necesario) */
+    width: 100%; /* Ancho de la franja al 100% del contenedor */
+    color: white; /* Color del texto en la franja (opcional) */
+    border-radius: 0% 0% 0% 0%;
+}
+
+
+
+
+
+
+.image-slider {
+    position: relative;
+    max-width: 1583px;
+    width: 100%;
+    height: 400px;
+}
+
+.image-slider img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.image-slider img.active {
+    opacity: 1;
+}
+.cuadro-fijo {
+    position: fixed;
+    top: 300px;
+    right: 0;
+    width: 50px;
+    height: auto; /* Cambiamos la altura a "auto" para que se ajuste automáticamente al contenido */
+    background-color: #616060;
+    border-left: 1px solid #ccc;
+    border-radius: 10px 0px 0px 10px;
+}
+
+.container {
+    /* Eliminamos el margen superior */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.fab {
+    font-size: 20px;
+    font-weight: 700;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 50%;
+    background-color: rgb(196, 193, 193);
+    box-shadow: 0 0 8px 1px rgba(0, 0, 0, 0.5);
+    transition: 0.5s;
+}
+
+/* Ajustamos el espaciado vertical entre los iconos */
+.ico1,
+.ico2,
+.ico3 {
+    margin-bottom: 10px;
+}
+
+.ico1:hover {
+    
+    color: #2992FB;
+}
+
+.ico2:hover {
+    color: #00acee;
+}
+
+.ico3:hover {
+    color: rgb(175, 39, 168);
+}
+
+a.ico1, a.ico2, a.ico3 {
+    text-decoration: none; /* Quita la subrayado predeterminado de los enlaces */
+    color: #000000; /* Color azul para los enlaces */
+    margin: 5px; /* Márgenes alrededor de los enlaces */
 }
