@@ -161,61 +161,65 @@ h2{
 .image-slider img.active {
     opacity: 1;
 }
+
+
+/* Estilo para el cuadro de redes sociales */
 .cuadro-fijo {
     position: fixed;
-    top: 300px;
+    top: 300px; /* Ajusta la posición vertical del cuadro según tus necesidades */
     right: 0;
-    width: 50px;
-    height: auto; /* Cambiamos la altura a "auto" para que se ajuste automáticamente al contenido */
-    background-color: #616060;
+    width: 60px;
+    height: 250px; /* Ajusta la altura del cuadro */
+    background-color: #fff;
     border-left: 1px solid #ccc;
     border-radius: 10px 0px 0px 10px;
-}
-
-.container {
-    /* Eliminamos el margen superior */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display: flex; /* Utilizamos flex para alinear los iconos verticalmente */
+    flex-direction: column; /* Alineamos los iconos en una columna */
     align-items: center;
 }
 
-.fab {
+/* Estilo para los enlaces de las redes sociales */
+a.ico1, a.ico2, a.ico3 {
+    text-decoration: none;
+    color: #000000;
+    margin-bottom: 20px; /* Ajusta el margen inferior para separar los iconos verticalmente */
+}
+
+/* Estilo para los iconos de las redes sociales */
+a.ico1 i, a.ico2 i, a.ico3 i {
     font-size: 20px;
     font-weight: 700;
     width: 20px;
     height: 20px;
     text-align: center;
-    margin: 5px;
     padding: 10px;
     border-radius: 50%;
-    background-color: rgb(196, 193, 193);
     box-shadow: 0 0 8px 1px rgba(0, 0, 0, 0.5);
     transition: 0.5s;
+    margin-top: 10px; /* Ajusta el margen superior de todos los iconos para separarlos verticalmente */
 }
 
-/* Ajustamos el espaciado vertical entre los iconos */
-.ico1,
-.ico2,
-.ico3 {
-    margin-bottom: 10px;
-}
-
-.ico1:hover {
-    
+/* Estilo para el efecto de brillo al pasar el mouse en el icono de Facebook */
+a.ico1:hover i {
     color: #2992FB;
+    box-shadow: 0 0 10px #2992FB, 0 0 20px #2992FB;
 }
 
-.ico2:hover {
+/* Estilo para el efecto de brillo al pasar el mouse en el icono de Twitter */
+a.ico2:hover i {
     color: #00acee;
+    box-shadow: 0 0 10px #00acee, 0 0 20px #00acee;
 }
 
-.ico3:hover {
+/* Estilo para el efecto de brillo al pasar el mouse en el icono de Instagram */
+a.ico3:hover i {
     color: rgb(175, 39, 168);
+    box-shadow: 0 0 10px rgb(175, 39, 168), 0 0 20px rgb(175, 39, 168);
 }
 
-a.ico1, a.ico2, a.ico3 {
-    text-decoration: none; /* Quita la subrayado predeterminado de los enlaces */
-    color: #000000; /* Color azul para los enlaces */
-    margin: 5px; /* Márgenes alrededor de los enlaces */
-}
+
+
+
+
+
+
