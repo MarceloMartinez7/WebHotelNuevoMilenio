@@ -15,7 +15,7 @@ module.exports = (db) => {
         // Ejecutar la consulta
         db.query(sql, (err, result) => {
             if (err) {
-                console.error('Error al leer registros:', err);
+                console.error('Error al leer registro:', err);
                 res.status(500).json({ error: 'Error al leer registros' });
             } else {
                 // Devolver los registros en formato JSON como respuesta
