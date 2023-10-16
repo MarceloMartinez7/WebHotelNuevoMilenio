@@ -27,7 +27,7 @@ module.exports = (db) => {
 
 
     // Ruta para crear un nuevo registro de Tipo_de_habitacion
-    router.post('/create', (req, res) => {
+    router.post('/createTipoHabitacion', (req, res) => {
         // Recibe los datos del nuevo registro desde el cuerpo de la solicitud (req.body)
         const { Nombre, Descripcion } = req.body;
         // Verifica si se proporcionaron los datos necesarios
@@ -48,6 +48,8 @@ module.exports = (db) => {
             }
         });
     });
+
+
 
     // Ruta para actualizar un registro existente de Tipo_de_habitacion por ID
     router.put('/update/:id', (req, res) => {
@@ -79,6 +81,7 @@ module.exports = (db) => {
     });
 
 
+
     // Ruta para eliminar un registro existente de Tipo_de_habitacion por ID
     router.delete('/delete/:id', (req, res) => {
         // Obtén el ID del registro a eliminar desde los parámetros de la URL
@@ -97,27 +100,62 @@ module.exports = (db) => {
         });
     });
 
-    router.post('/cliente/create', (req, res) => {
+
+
+    router.post('/createCliente', (req, res) => {
         // Recibe los datos del nuevo registro desde el cuerpo de la solicitud (req.body)
-        const { ID_Persona, Procedencia } = req.body;
+        const { 
+            Cedula, 
+            Nombre1, 
+            Nombre2, 
+            Apellido1, 
+            Apellido2, 
+            Telefono, 
+            Procedencia,
+         } = req.body;
+        
         // Verifica si se proporcionaron los datos necesarios
-        if (!ID_Persona || !Procedencia) {
-            return res.status(400).json({ error: 'Los campos "ID_Persona" y "Procedencia" son obligatorios' });
+        if (!Cedula || !Nombre1 || !Apellido1 || !Telefono || !Procedencia) {
+            return res.status(400).json({ error: 'Los campos "Cedula", "Nombre1", "Apellido1", "Telefono" y "Procedencia" son obligatorios' });
         }
-        // Realiza la consulta SQL para insertar un nuevo registro de Cliente
-        const sql = `INSERT INTO Cliente (ID_Persona, Procedencia) VALUES (?, ?)`;
-        const values = [ID_Persona, Procedencia];
-        // Ejecuta la consulta
-        db.query(sql, values, (err, result) => {
+        
+        // Realiza la consulta SQL para insertar un nuevo registro en la tabla "Persona"
+        const personaSql = `
+            INSERT INTO Persona (Cedula, Nombre1, Nombre2, Apellido1, Apellido2, Telefono)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `;
+        const personaValues = [Cedula, Nombre1, Nombre2, Apellido1, Apellido2, Telefono];
+        
+        // Ejecuta la consulta para insertar en la tabla "Persona"
+        db.query(personaSql, personaValues, (err, personaResult) => {
             if (err) {
-                console.error('Error al insertar registro de Cliente:', err);
-                res.status(500).json({ error: 'Error al insertar registro de Cliente' });
+                console.error('Error al insertar registro de Persona:', err);
+                res.status(500).json({ error: 'Error al insertar registro de Persona' });
             } else {
-                // Devuelve el ID del nuevo registro como respuesta
-                res.status(201).json({ ID_cliente: result.insertId });
+                const ID_Persona = personaResult.insertId; // Obtenemos el ID_Persona recién insertado
+    
+                // Realiza la consulta SQL para insertar un nuevo registro de Cliente
+                const clienteSql = `INSERT INTO Cliente (ID_Persona, Procedencia)
+                    VALUES (?, ?)
+                `;
+                const clienteValues = [ID_Persona, Procedencia];
+    
+                // Ejecuta la consulta para insertar en la tabla "Cliente"
+                db.query(clienteSql, clienteValues, (err, clienteResult) => {
+                    if (err) {
+                        console.error('Error al insertar registro de Cliente:', err);
+                        res.status(500).json({ error: 'Error al insertar registro de Cliente' });
+                    } else {
+                        // Devuelve el ID del nuevo registro de Cliente como respuesta
+                        res.status(201).json({ ID_cliente: clienteResult.insertId });
+                    }
+                });
             }
         });
     });
+
+
+
     
     // Ruta para actualizar un registro existente de Cliente por ID
     router.put('/cliente/update/:id', (req, res) => {

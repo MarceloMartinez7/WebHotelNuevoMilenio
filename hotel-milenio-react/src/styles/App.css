@@ -1,0 +1,25 @@
+.navbar-color {
+  background-color: rgb(33, 34, 34); /* Color de fondo personalizado */
+}
+
+.link-unstyled {
+  text-decoration: none; /* Elimina el subrayado */
+  color: inherit; /* Usa el color heredado (generalmente, el color predeterminado) */
+}
+
+.center-button {
+  text-align: center;
+  
+}
+
+.custom-button {
+  background-color: #ff0000; 
+  color: #ffffff; 
+  transition: none;
+  &:hover {
+      background-color: #23a8c9; 
+      color: #ffffff; 
+  }
+  
+}
+
