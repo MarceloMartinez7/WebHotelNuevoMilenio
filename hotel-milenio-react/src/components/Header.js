@@ -42,6 +42,17 @@ function Header() {
                 </NavDropdown.Item>
               </NavDropdown>
 
+
+              <NavDropdown title="Empleado" id="Empleado">
+                <NavDropdown.Item>
+                  <Link to="/Empleado" className="link-unstyled">Registrar Empleado</Link>
+                </NavDropdown.Item>
+
+                <NavDropdown.Item>
+                  <Link to="/actualizar-Empleado" className="link-unstyled">Listar Empleado</Link>
+                </NavDropdown.Item>
+              </NavDropdown>
+
               
 
             </Nav>
@@ -83,6 +94,15 @@ function Header() {
               </NavDropdown.Item>
             </NavDropdown>
 
+
+            <NavDropdown title="Empleado" id="Empleado">
+              <NavDropdown.Item>
+                <Link to="/Empleado" className="link-unstyled">Registrar Empleado</Link>
+              </NavDropdown.Item>
+              <NavDropdown.Item>
+                <Link to="/actualizar-Empleado" className="link-unstyled">Listar Empleado</Link>
+              </NavDropdown.Item>
+            </NavDropdown>
             
 
           </Nav>

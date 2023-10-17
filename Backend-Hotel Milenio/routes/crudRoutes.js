@@ -204,27 +204,50 @@ module.exports = (db) => {
         });
     });
 
-    router.post('/empleado/create', (req, res) => {
+    router.post('/createEmpleado', (req, res) => {
         // Recibe los datos del nuevo registro desde el cuerpo de la solicitud (req.body)
-        const { ID_Persona, Usuario, Contraseña } = req.body;
+        const { Nombre1, Nombre2, Apellido1, Apellido2, Telefono, Usuario, Contraseña } = req.body;
+    
         // Verifica si se proporcionaron los datos necesarios
-        if (!ID_Persona || !Usuario || !Contraseña) {
-            return res.status(400).json({ error: 'Los campos "ID_Persona", "Usuario" y "Contraseña" son obligatorios' });
+        if (!Nombre1 || !Apellido1 || !Telefono || !Usuario || !Contraseña) {
+            return res.status(400).json({ error: 'Los campos "Nombre1", "Apellido1", "Telefono", "Usuario" y "Contraseña" son obligatorios' });
         }
-        // Realiza la consulta SQL para insertar un nuevo registro de Empleado
-        const sql = `INSERT INTO Empleado (ID_Persona, Usuario, Contraseña) VALUES (?, ?, ?)`;
-        const values = [ID_Persona, Usuario, Contraseña];
-        // Ejecuta la consulta
-        db.query(sql, values, (err, result) => {
+    
+        // Realiza la consulta SQL para insertar un nuevo registro en la tabla "Persona"
+        const personaSql = `
+            INSERT INTO Persona (Nombre1, Nombre2, Apellido1, Apellido2, Telefono)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        const personaValues = [Nombre1, Nombre2, Apellido1, Apellido2, Telefono];
+    
+        // Ejecuta la consulta para insertar en la tabla "Persona"
+        db.query(personaSql, personaValues, (err, personaResult) => {
             if (err) {
-                console.error('Error al insertar registro de Empleado:', err);
-                res.status(500).json({ error: 'Error al insertar registro de Empleado' });
+                console.error('Error al insertar registro de Persona:', err);
+                res.status(500).json({ error: 'Error al insertar registro de Persona' });
             } else {
-                // Devuelve el ID del nuevo registro como respuesta
-                res.status(201).json({ ID_Empleado: result.insertId });
+                const ID_Persona = personaResult.insertId; // Obtenemos el ID_Persona recién insertado
+    
+                // Realiza la consulta SQL para insertar un nuevo registro de Empleado
+                const empleadoSql = `INSERT INTO Empleado (ID_Persona, Usuario, Contraseña)
+                    VALUES (?, ?, ?)
+                `;
+                const empleadoValues = [ID_Persona, Usuario, Contraseña];
+    
+                // Ejecuta la consulta para insertar en la tabla "Empleado"
+                db.query(empleadoSql, empleadoValues, (err, empleadoResult) => {
+                    if (err) {
+                        console.error('Error al insertar registro de Empleado:', err);
+                        res.status(500).json({ error: 'Error al insertar registro de Empleado' });
+                    } else {
+                        // Devuelve el ID del nuevo registro de Empleado como respuesta
+                        res.status(201).json({ ID_Empleado: empleadoResult.insertId });
+                    }
+                });
             }
         });
     });
+    
     
     // Ruta para actualizar un registro existente de Empleado por ID
     router.put('/empleado/update/:id', (req, res) => {
