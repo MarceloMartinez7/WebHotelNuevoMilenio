@@ -156,53 +156,108 @@ module.exports = (db) => {
 
 
 
-    
-    // Ruta para actualizar un registro existente de Cliente por ID
-    router.put('/cliente/update/:id', (req, res) => {
-        // Obtén el ID del registro a actualizar desde los parámetros de la URL
-        const id = req.params.id;
-        // Recibe los datos actualizados desde el cuerpo de la solicitud (req.body)
-        const { ID_Persona, Procedencia } = req.body;
-        // Verifica si se proporcionaron los datos necesarios
-        if (!ID_Persona || !Procedencia) {
-            return res.status(400).json({ error: 'Los campos "ID_Persona" y "Procedencia" son obligatorios' });
-        }
-        // Realiza la consulta SQL para actualizar el registro de Cliente por ID
+    router.get('/ListarClientes', (req, res) => {
+        // Realiza una consulta SQL para seleccionar todos los registros de Cliente y sus datos relacionados de Persona
         const sql = `
-            UPDATE Cliente
-            SET ID_Persona = ?, Procedencia = ?
-            WHERE ID_cliente = ?
+        SELECT Cliente.ID_cliente, Persona.ID_Persona, Persona.Cedula, Persona.Nombre1, Persona.Nombre2, Persona.Apellido1, Persona.Apellido2, Persona.Telefono, Cliente.Procedencia
+        FROM Cliente
+        INNER JOIN Persona ON Cliente.ID_Persona = Persona.ID_Persona;
         `;
-        const values = [ID_Persona, Procedencia, id];
-        // Ejecuta la consulta
-        db.query(sql, values, (err, result) => {
-            if (err) {
-                console.error('Error al actualizar el registro de Cliente:', err);
-                res.status(500).json({ error: 'Error al actualizar el registro de Cliente' });
-            } else {
-                // Devuelve un mensaje de éxito
-                res.status(200).json({ message: 'Registro de Cliente actualizado con éxito' });
-            }
-        });
-    });
     
-    // Ruta para eliminar un registro existente de Cliente por ID
-    router.delete('/cliente/delete/:id', (req, res) => {
-        // Obtén el ID del registro a eliminar desde los parámetros de la URL
-        const id = req.params.id;
-        // Realiza la consulta SQL para eliminar el registro de Cliente por ID
-        const sql = 'DELETE FROM Cliente WHERE ID_cliente = ?';
         // Ejecuta la consulta
-        db.query(sql, [id], (err, result) => {
+        db.query(sql, (err, result) => {
             if (err) {
-                console.error('Error al eliminar el registro de Cliente:', err);
-                res.status(500).json({ error: 'Error al eliminar el registro de Cliente' });
+                console.error('Error al recuperar registros de Cliente:', err);
+                res.status(500).json({ error: 'Error al recuperar registros de Cliente' });
             } else {
-                // Devuelve un mensaje de éxito
-                res.status(200).json({ message: 'Registro de Cliente eliminado con éxito' });
+                // Devuelve los registros en formato JSON como respuesta
+                res.status(200).json(result);
             }
         });
     });
+
+    
+    // Ruta para actualizar un registro existente de Persona por ID
+router.put('/updateCliente/:id', (req, res) => {
+    // Obtén el ID del registro a actualizar desde los parámetros de la URL
+    const id = req.params.id;
+    
+    // Recibe los datos actualizados desde el cuerpo de la solicitud (req.body)
+    const { Cedula, Nombre1, Nombre2, Apellido1, Apellido2, Telefono } = req.body;
+
+    // Verifica si se proporcionaron los datos necesarios
+    if (!Cedula || !Nombre1 || !Apellido1 || !Telefono) {
+        return res.status(400).json({ error: 'Los campos "Cedula," "Nombre1," "Apellido1," y "Telefono" son obligatorios' });
+    }
+
+    // Realiza la consulta SQL para actualizar el registro de Persona por ID
+    const sql = `
+        UPDATE Persona
+        SET Cedula = ?, Nombre1 = ?, Nombre2 = ?, Apellido1 = ?, Apellido2 = ?, Telefono = ?
+        WHERE ID_Persona = ?
+    `;
+
+    const values = [Cedula, Nombre1, Nombre2, Apellido1, Apellido2, Telefono, id];
+
+    // Ejecuta la consulta
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error al actualizar el registro de Persona:', err);
+            res.status(500).json({ error: 'Error al actualizar el registro de Persona' });
+        } else {
+            // Devuelve un mensaje de éxito
+            res.status(200).json({ message: 'Registro de Persona actualizado con éxito' });
+        }
+    });
+});
+
+
+
+// Ruta para eliminar un registro existente de Cliente y Persona por ID
+router.delete('/deleteCliente/:id', (req, res) => {
+    // Obtén el ID del registro de Cliente a eliminar desde los parámetros de la URL
+    const id = req.params.id;
+
+    // Realiza la consulta SQL para eliminar el registro de Cliente por ID
+    const clienteSql = 'DELETE FROM Cliente WHERE ID_cliente = ?';
+
+    // Realiza la consulta SQL para obtener el ID de la persona vinculada al Cliente
+    const obtenerIdPersonaSql = 'SELECT ID_Persona FROM Cliente WHERE ID_cliente = ?';
+
+    db.query(obtenerIdPersonaSql, [id], (err, result) => {
+        if (err) {
+            console.error('Error al obtener el ID de la Persona vinculada al Cliente:', err);
+            res.status(500).json({ error: 'Error al obtener el ID de la Persona vinculada al Cliente' });
+        } else {
+            // Obtén el ID de la Persona
+            const idPersona = result[0].ID_Persona;
+
+            // Realiza la consulta SQL para eliminar el registro de Persona por ID
+            const personaSql = 'DELETE FROM Persona WHERE ID_Persona = ?';
+
+            // Ejecuta la consulta para eliminar el registro de Cliente
+            db.query(clienteSql, [id], (err, result) => {
+                if (err) {
+                    console.error('Error al eliminar el registro de Cliente:', err);
+                    res.status(500).json({ error: 'Error al eliminar el registro de Cliente' });
+                } else {
+                    // Ejecuta la consulta para eliminar el registro de Persona
+                    db.query(personaSql, [idPersona], (err, result) => {
+                        if (err) {
+                            console.error('Error al eliminar el registro de Persona:', err);
+                            res.status(500).json({ error: 'Error al eliminar el registro de Persona' });
+                        } else {
+                            // Devuelve un mensaje de éxito
+                            res.status(200).json({ message: 'Registro de Cliente y Persona eliminados con éxito' });
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+
 
     router.post('/createEmpleado', (req, res) => {
         // Recibe los datos del nuevo registro desde el cuerpo de la solicitud (req.body)
