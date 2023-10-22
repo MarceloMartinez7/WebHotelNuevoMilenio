@@ -213,47 +213,32 @@ module.exports = (db) => {
 
 
 
-  // Ruta para eliminar un registro existente de Cliente y Persona por ID
-  router.delete('/deleteCliente/:id', (req, res) => {
-    // Obtén el ID del registro de Cliente a eliminar desde los parámetros de la URL
-    const id = req.params.id;
+   // Ruta para eliminar un registro existente de Cliente y Persona por ID
+router.delete('/deleteCliente/:idCliente/:idPersona', (req, res) => {
+    // Obtén el ID del registro de Cliente y de la Persona a eliminar desde los parámetros de la URL
+    const idCliente = req.params.idCliente;
+    const idPersona = req.params.idPersona;
 
-    // Realiza la consulta SQL para obtener el ID de la persona vinculada al Cliente
-    const obtenerIdPersonaSql = 'SELECT ID_Persona FROM Cliente WHERE ID_cliente = ?';
-
-    
     // Realiza la consulta SQL para eliminar el registro de Cliente por ID
     const clienteSql = 'DELETE FROM Cliente WHERE ID_cliente = ?';
 
-    
+    // Realiza la consulta SQL para eliminar el registro de Persona por ID
+    const personaSql = 'DELETE FROM Persona WHERE ID_Persona = ?';
 
-    db.query(obtenerIdPersonaSql, [id], (err, result) => {
+    // Ejecuta la consulta para eliminar el registro de Cliente
+    db.query(clienteSql, [idCliente], (err, result) => {
         if (err) {
-            console.error('Error al obtener el ID de la Persona vinculada al Cliente:', err);
-            res.status(500).json({ error: 'Error al obtener el ID de la Persona vinculada al Cliente' });
+            console.error('Error al eliminar el registro de Cliente:', err);
+            res.status(500).json({ error: 'Error al eliminar el registro de Cliente' });
         } else {
-            // Obtén el ID de la Persona
-            const idPersona = result[0].ID_Persona;
-
-            // Realiza la consulta SQL para eliminar el registro de Persona por ID
-            const personaSql = 'DELETE FROM Persona WHERE ID_Persona = ?';
-
-            // Ejecuta la consulta para eliminar el registro de Cliente
-            db.query(clienteSql, [id], (err, result) => {
+            // Ejecuta la consulta para eliminar el registro de Persona
+            db.query(personaSql, [idPersona], (err, result) => {
                 if (err) {
-                    console.error('Error al eliminar el registro de Cliente:', err);
-                    res.status(500).json({ error: 'Error al eliminar el registro de Cliente' });
+                    console.error('Error al eliminar el registro de Persona:', err);
+                    res.status(500).json({ error: 'Error al eliminar el registro de Persona' });
                 } else {
-                    // Ejecuta la consulta para eliminar el registro de Persona
-                    db.query(personaSql, [idPersona], (err, result) => {
-                        if (err) {
-                            console.error('Error al eliminar el registro de Persona:', err);
-                            res.status(500).json({ error: 'Error al eliminar el registro de Persona' });
-                        } else {
-                            // Devuelve un mensaje de éxito
-                            res.status(200).json({ message: 'Registro de Cliente y Persona eliminados con éxito' });
-                        }
-                    });
+                    // Devuelve un mensaje de éxito
+                    res.status(200).json({ message: 'Registro de Cliente y Persona eliminados con éxito' });
                 }
             });
         }
@@ -367,54 +352,38 @@ module.exports = (db) => {
 });
 
 
-   // Ruta para eliminar un registro existente de Empleado y Persona por ID
-router.delete('/deleteEmpleado/:id', (req, res) => {
-    // Obtén el ID del registro de Empleado a eliminar desde los parámetros de la URL
-    const id = req.params.id;
-
-    // Imprime el valor de id en la consola
-    console.log('Valor de id:', id);
+     // Ruta para eliminar un registro existente de Cliente y Persona por ID
+router.delete('/deleteEmpleado/:idEmpleado/:idPersona', (req, res) => {
+    // Obtén el ID del registro de Cliente y de la Persona a eliminar desde los parámetros de la URL
+    const idEmpleado= req.params.idEmpleado;
+    const idPersona = req.params.idPersona;
 
     // Realiza la consulta SQL para eliminar el registro de Empleado por ID
     const empleadoSql = 'DELETE FROM Empleado WHERE ID_Empleado = ?';
 
-    // Realiza la consulta SQL para obtener el ID de la persona vinculada al Cliente
-    const obtenerIdPersonaSql = 'SELECT ID_Persona FROM Empleado WHERE ID_Empleado = ?';
+    // Realiza la consulta SQL para eliminar el registro de Persona por ID
+    const personaSql = 'DELETE FROM Persona WHERE ID_Persona = ?';
 
-    db.query(obtenerIdPersonaSql, [id], (err, result) => {
+    // Ejecuta la consulta para eliminar el registro de Empleado
+    db.query(empleadoSql, [idEmpleado], (err, result) => {
         if (err) {
-            console.error('Error al obtener el ID de la Persona vinculada al Empleado:', err);
-            res.status(500).json({ error: 'Error al obtener el ID de la Persona vinculada al Empleado' });
-        } else if (!result || result.length === 0) {
-            console.error('No se encontró un ID de Persona vinculado al Empleado');
-            res.status(404).json({ error: 'No se encontró un ID de Persona vinculado al Empleado' });
+            console.error('Error al eliminar el registro de Empleado:', err);
+            res.status(500).json({ error: 'Error al eliminar el registro de Empleado' });
         } else {
-            const idPersona = result[0].ID_Persona;
-
-            // Realiza la consulta SQL para eliminar el registro de Persona por ID
-            const personaSql = 'DELETE FROM Persona WHERE ID_Persona = ?';
-
-            // Ejecuta la consulta para eliminar el registro de Empleado
-            db.query(empleadoSql, [id], (err, result) => {
+            // Ejecuta la consulta para eliminar el registro de Persona
+            db.query(personaSql, [idPersona], (err, result) => {
                 if (err) {
-                    console.error('Error al eliminar el registro de Empleado:', err);
-                    res.status(500).json({ error: 'Error al eliminar el registro de Empleado' });
+                    console.error('Error al eliminar el registro de Persona:', err);
+                    res.status(500).json({ error: 'Error al eliminar el registro de Persona' });
                 } else {
-                    // Ejecuta la consulta para eliminar el registro de Persona
-                    db.query(personaSql, [idPersona], (err, result) => {
-                        if (err) {
-                            console.error('Error al eliminar el registro de Persona:', err);
-                            res.status(500).json({ error: 'Error al eliminar el registro de Persona' });
-                        } else {
-                            // Devuelve un mensaje de éxito
-                            res.status(200).json({ message: 'Registro de Empleado y Persona eliminados con éxito' });
-                        }
-                    });
+                    // Devuelve un mensaje de éxito
+                    res.status(200).json({ message: 'Registro de Empleado y Persona eliminados con éxito' });
                 }
             });
         }
     });
 });
+
 
 
     router.post('/habitacion/create', (req, res) => {

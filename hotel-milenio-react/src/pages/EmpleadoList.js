@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Card, Row, Col, Form, Modal, FloatingLabel } from 'react-bootstrap';
 import Header from '../components/Header';
 
+
 function EmpleadoList() {
   const [empleado, setempleado] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -75,28 +76,31 @@ function EmpleadoList() {
 
 
 
-// Función para eliminar un Empleado
-const handleDelete = (idPersona) => {
-  const confirmation = window.confirm('¿Seguro que deseas eliminar este Empleado?');
-  if (confirmation) {
-    // Realiza la solicitud DELETE al servidor para eliminar el Empleado
-    fetch(`http://localhost:5000/crud/deleteEmpleado/${idPersona}`, {
-      method: 'DELETE',
-    })
-      .then((response) => {
-        if (response.ok) {
-          // La eliminación fue exitosa, refresca la lista de empleado
-          loadEmpleado();
-          alert('Empleado eliminado con éxito.');
-        } else {
-          alert('Error al eliminar el Empleado. Por favor, inténtalo de nuevo más tarde.');
-        }
-      })
-      .catch((error) => {
-        console.error('Error al eliminar el Empleado:', error);
-        alert('Ocurrió un error al eliminar el Empleado. Por favor, verifica tu conexión a Internet o inténtalo de nuevo más tarde.');
-      });
-  }
+  const handleDelete = (idEmpleado, idPersona) => {
+
+
+    console.log("idEmpleado:", idEmpleado);
+    console.log("idPersona:", idPersona);
+    const confirmation = window.confirm('¿Seguro que deseas eliminar este Empleado?');
+    if (confirmation) {
+        // Realiza la solicitud DELETE al servidor para eliminar el empleado y la Persona
+        fetch(`http://localhost:5000/crud/deleteEmpleado/${idEmpleado}/${idPersona}`, {
+            method: 'DELETE',
+        })
+        .then((response) => {
+            if (response.ok) {
+                // La eliminación fue exitosa, refresca la lista de Empeado
+                loadEmpleado();
+                alert('Empleado eliminado con éxito.');
+            } else {
+                alert('Error al eliminar el Empleado. Por favor, inténtalo de nuevo más tarde.');
+            }
+        })
+        .catch((error) => {
+            console.error('Error al eliminar el Empleado:', error);
+            alert('Ocurrió un error al eliminar el Empleado. Por favor, verifica tu conexión a Internet o inténtalo de nuevo más tarde.');
+        });
+    }
 };
 
 
@@ -144,7 +148,7 @@ const handleDelete = (idPersona) => {
                   <td>{empleado.Contraseña}</td>
                   <td>
                     <Button variant="primary" onClick={() => openModal(empleado)}>Actualizar</Button>
-                    <Button variant="danger" onClick={() => handleDelete(empleado.ID_Persona)}>Eliminar</Button>
+                    <Button variant="danger" onClick={() => handleDelete(empleado.ID_Empleado, empleado.ID_Persona)}>Eliminar</Button>
                   </td>
                 </tr>
               ))}

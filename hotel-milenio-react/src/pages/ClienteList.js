@@ -74,28 +74,31 @@ function ClienteList() {
 
 
 
-// Función para eliminar un Cliente
-const handleDelete = (idPersona) => {
-  const confirmation = window.confirm('¿Seguro que deseas eliminar este Cliente?');
-  if (confirmation) {
-    // Realiza la solicitud DELETE al servidor para eliminar el Cliente
-    fetch(`http://localhost:5000/crud/deleteCliente/${idPersona}`, {
-      method: 'DELETE',
-    })
-      .then((response) => {
-        if (response.ok) {
-          // La eliminación fue exitosa, refresca la lista de Cliente
-          loadCliente();
-          alert('Cliente eliminado con éxito.');
-        } else {
-          alert('Error al eliminar el Cliente. Por favor, inténtalo de nuevo más tarde.');
-        }
-      })
-      .catch((error) => {
-        console.error('Error al eliminar el Cliente:', error);
-        alert('Ocurrió un error al eliminar el Cliente. Por favor, verifica tu conexión a Internet o inténtalo de nuevo más tarde.');
-      });
-  }
+  const handleDelete = (idCliente, idPersona) => {
+
+
+    console.log("idCliente:", idCliente);
+    console.log("idPersona:", idPersona);
+    const confirmation = window.confirm('¿Seguro que deseas eliminar este Cliente?');
+    if (confirmation) {
+        // Realiza la solicitud DELETE al servidor para eliminar el Cliente y la Persona
+        fetch(`http://localhost:5000/crud/deleteCliente/${idCliente}/${idPersona}`, {
+            method: 'DELETE',
+        })
+        .then((response) => {
+            if (response.ok) {
+                // La eliminación fue exitosa, refresca la lista de Cliente
+                loadCliente();
+                alert('Cliente eliminado con éxito.');
+            } else {
+                alert('Error al eliminar el Cliente. Por favor, inténtalo de nuevo más tarde.');
+            }
+        })
+        .catch((error) => {
+            console.error('Error al eliminar el Cliente:', error);
+            alert('Ocurrió un error al eliminar el Cliente. Por favor, verifica tu conexión a Internet o inténtalo de nuevo más tarde.');
+        });
+    }
 };
 
 
@@ -131,7 +134,7 @@ const handleDelete = (idPersona) => {
             </thead>
             <tbody>
               {cliente.map((cliente) => (
-                <tr key={cliente.ID_Cliente}>
+                <tr key={cliente.ID_cliente}>
                   <td>{cliente.ID_cliente}</td>
                   <td>{cliente.ID_Persona}</td>
                   <td>{cliente.Cedula}</td>
@@ -143,7 +146,7 @@ const handleDelete = (idPersona) => {
                   <td>{cliente.Procedencia}</td>
                   <td>
                     <Button variant="primary" onClick={() => openModal(cliente)}>Actualizar</Button>
-                    <Button variant="danger" onClick={() => handleDelete(cliente.ID_Persona)}>Eliminar</Button>
+                    <Button variant="danger" onClick={() => handleDelete(cliente.ID_cliente, cliente.ID_Persona)}>Eliminar</Button>
                   </td>
                 </tr>
               ))}
