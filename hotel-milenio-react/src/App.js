@@ -5,6 +5,7 @@ import About from './pages/About';
 import Cliente from './pages/Cliente';
 import ClienteList from './pages/ClienteList';
 import Empleado from './pages/Empleado';
+import EmpleadoList from './pages/EmpleadoList';
 
 
 
@@ -17,6 +18,7 @@ function App() {
         <Route path="/Cliente" element={<Cliente />} />
         <Route path="/actualizar-cliente" element={<ClienteList />} />
         <Route path="/Empleado" element={<Empleado />} />
+        <Route path="/actualizar-Empleado" element={<EmpleadoList />} />
         
       </Routes>
     </Router>
