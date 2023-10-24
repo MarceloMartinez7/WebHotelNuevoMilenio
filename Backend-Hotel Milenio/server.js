@@ -9,8 +9,8 @@ const port = 5000;
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'Yamilg620',
-  database: 'DB_HotelMilenio',
+  password: 'Marcelox2021',
+  database: 'db_hotelmilenio',
 });
 
 db.connect((err) => {

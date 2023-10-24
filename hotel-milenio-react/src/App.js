@@ -6,8 +6,7 @@ import Cliente from './pages/Cliente';
 import ClienteList from './pages/ClienteList';
 import Empleado from './pages/Empleado';
 import EmpleadoList from './pages/EmpleadoList';
-
-
+import HabitacionList from './pages/HabitacionList';
 
 function App() {
   return (
@@ -19,7 +18,7 @@ function App() {
         <Route path="/actualizar-cliente" element={<ClienteList />} />
         <Route path="/Empleado" element={<Empleado />} />
         <Route path="/actualizar-Empleado" element={<EmpleadoList />} />
-        
+        <Route path="/ListarHabitacion" element={<HabitacionList />} />
       </Routes>
     </Router>
   );
