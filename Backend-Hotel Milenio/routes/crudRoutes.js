@@ -456,28 +456,71 @@ router.delete('/deleteEmpleado/:idEmpleado/:idPersona', (req, res) => {
     });
 
 
-    // Ruta para crear un nuevo registro de ReservacionEstancia
-    router.post('/reservacion/create', (req, res) => {
-        // Recibe los datos del nuevo registro desde el cuerpo de la solicitud (req.body)
-        const { ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, EstadoReserva } = req.body;
-        // Verifica si se proporcionaron los datos necesarios
-        if (!ID_cliente || !F_entrada || !F_salida || !ID_Empleado || !TipoServicio || !EstadoReserva) {
+    router.post('/reservacionCreate', (req, res) => {
+        const { ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, ID_Habitacion } = req.body;
+    
+        if (!ID_cliente || !F_entrada || !F_salida || !ID_Empleado || !TipoServicio || !ID_Habitacion) {
             return res.status(400).json({ error: 'Todos los campos son obligatorios' });
         }
-        // Realiza la consulta SQL para insertar un nuevo registro de ReservacionEstancia
-        const sql = `INSERT INTO ReservacionEstancia (ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, EstadoReserva) VALUES (?, ?, ?, ?, ?, ?)`;
-        const values = [ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, EstadoReserva];
-        // Ejecuta la consulta
-        db.query(sql, values, (err, result) => {
+    
+        // Iniciar una transacción para asegurarse de que todas las operaciones se realicen con éxito o ninguna
+        db.beginTransaction(function (err) {
             if (err) {
-                console.error('Error al insertar registro de ReservacionEstancia:', err);
-                res.status(500).json({ error: 'Error al insertar registro de ReservacionEstancia' });
-            } else {
-                // Devuelve el ID del nuevo registro como respuesta
-                res.status(201).json({ ID_ReservaEstancia: result.insertId });
+                return res.status(500).json({ error: 'Error al iniciar la transacción' });
             }
+    
+            // Insertar un nuevo registro de ReservacionEstancia
+            const reservaSql = `INSERT INTO ReservacionEstancia (ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, EstadoReserva) VALUES (?, ?, ?, ?, ?, ?)`;
+            const reservaValues = [ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, 'Activo'];
+    
+            db.query(reservaSql, reservaValues, (err, result) => {
+                if (err) {
+                    return db.rollback(() => {
+                        res.status(500).json({ error: 'Error al insertar registro de ReservacionEstancia' });
+                    });
+                }
+    
+                const reservaID = result.insertId; // Obtén el ID de la reserva recién insertada
+    
+                // Actualizar el estado de la habitación a "Ocupado"
+                const updateHabitacionSql = `UPDATE Habitacion SET ID_Estado = ? WHERE ID_Habitacion = ?`;
+                const updateHabitacionValues = [2, ID_Habitacion]; // 2 representa el ID_Estado "Ocupado"
+    
+                db.query(updateHabitacionSql, updateHabitacionValues, (err, result) => {
+                    if (err) {
+                        return db.rollback(() => {
+                            res.status(500).json({ error: 'Error al actualizar el estado de la habitación' });
+                        });
+                    }
+    
+                    // Insertar un nuevo registro en DetalleReservacion con el ID de reserva y el ID de la habitación
+                    const detalleSql = `INSERT INTO DetalleReservacion (ID_ReservaEstancia, ID_Habitacion) VALUES (?, ?)`;
+                    const detalleValues = [reservaID, ID_Habitacion];
+    
+                    db.query(detalleSql, detalleValues, (err, result) => {
+                        if (err) {
+                            return db.rollback(() => {
+                                res.status(500).json({ error: 'Error al insertar registro en DetalleReservacion' });
+                            });
+                        }
+    
+                        // Realizar un commit para confirmar todas las operaciones
+                        db.commit((err) => {
+                            if (err) {
+                                return db.rollback(() => {
+                                    res.status(500).json({ error: 'Error al confirmar la transacción' });
+                                });
+                            }
+    
+                            res.status(201).json({ ID_ReservaEstancia: reservaID });
+                        });
+                    });
+                });
+            });
         });
     });
+    
+    
 
     // Ruta para actualizar un registro existente de ReservacionEstancia por ID
     router.put('/reservacion/update/:id', (req, res) => {
