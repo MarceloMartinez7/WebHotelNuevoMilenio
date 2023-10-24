@@ -437,6 +437,39 @@ router.delete('/deleteEmpleado/:idEmpleado/:idPersona', (req, res) => {
         });
     });
 
+
+
+    router.get('/ListarHabitaciones', (req, res) => {
+        // Realiza una consulta SQL para seleccionar todos los registros de Habitacion y sus datos relacionados de Tipo_de_habitacion y Estado
+        const sql = `
+        SELECT
+    Habitacion.ID_Habitacion,
+    Habitacion.N_de_habitacion,
+    Tipo_de_habitacion.Nombre AS Tipo_Habitacion,
+    Habitacion.Num_Cama,
+    Estado.NombreEstado AS Estado_Habitacion,
+    Habitacion.Precio
+FROM
+    Habitacion
+INNER JOIN
+    Tipo_de_habitacion ON Habitacion.ID_tipoHabitacion = Tipo_de_habitacion.ID_tipoHabitacion
+INNER JOIN
+    Estado ON Habitacion.ID_Estado = Estado.ID_Estado;
+        `;
+    
+        // Ejecuta la consulta
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.error('Error al recuperar registros de Habitacion:', err);
+                res.status(500).json({ error: 'Error al recuperar registros de Habitacion' });
+            } else {
+                // Devuelve los registros en formato JSON como respuesta
+                res.status(200).json(result);
+            }
+        });
+    });
+    
+
     // Ruta para eliminar un registro existente de Habitacion por ID
     router.delete('/habitacion/delete/:id', (req, res) => {
         // Obtén el ID del registro a eliminar desde los parámetros de la URL

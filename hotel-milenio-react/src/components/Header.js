@@ -53,6 +53,14 @@ function Header() {
                 </NavDropdown.Item>
               </NavDropdown>
 
+
+              <NavDropdown title="Habitacion" id="Habitacion">
+              
+
+                <NavDropdown.Item>
+                  <Link to="/ListarHabitacion" className="link-unstyled">Listar Habitacion</Link>
+                </NavDropdown.Item>
+              </NavDropdown>
               
 
             </Nav>
@@ -103,6 +111,17 @@ function Header() {
                 <Link to="/actualizar-Empleado" className="link-unstyled">Listar Empleado</Link>
               </NavDropdown.Item>
             </NavDropdown>
+            
+
+            <NavDropdown title="Habitacion" id="Habitacion">
+              
+
+              <NavDropdown.Item>
+                <Link to="/ListarHabitacion" className="link-unstyled">Listar Habitacion</Link>
+              </NavDropdown.Item>
+            </NavDropdown>
+            
+
             
 
           </Nav>
