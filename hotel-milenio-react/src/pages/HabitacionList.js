@@ -66,13 +66,42 @@ function HabitacionList() {
       .catch((error) => console.error('Error al actualizar el registro de la habitación:', error));
   };
 
+
+/*   const handleDeleteHabitacion = (idHabitacion) => {
+    const confirmation = window.confirm('¿Seguro que deseas eliminar esta habitación?');
+    if (confirmation) {
+      // Realiza una solicitud DELETE al servidor para eliminar la habitación
+      fetch(`http://localhost:5000/crud/habitacion/delete/${idHabitacion}`, {
+        method: 'DELETE',
+      })
+        .then((response) => {
+          if (response.ok) {
+            // La eliminación fue exitosa, puedes realizar alguna acción adicional si lo deseas
+            alert('Habitación eliminada con éxito.');
+          } else {
+            alert('Error al eliminar la habitación. Por favor, inténtalo de nuevo más tarde.');
+          }
+        })
+        .catch((error) => {
+          console.error('Error al eliminar la habitación:', error);
+          alert('Ocurrió un error al eliminar la habitación. Por favor, verifica tu conexión a Internet o inténtalo de nuevo más tarde.');
+        });
+    }
+  }; */
+
+
+
+
+
+
+
   // Función para manejar la eliminación de una habitación
   const handleDelete = (idHabitacion) => {
     const confirmation = window.confirm('¿Seguro que deseas eliminar esta habitación?');
     if (confirmation) {
       // Realiza una solicitud DELETE al servidor para eliminar la habitación
-      fetch(`http://localhost:5000/crud/deleteHabitacion/${idHabitacion}`, {
-        method: 'DELETE',
+      fetch(`http://localhost:5000/crud/habitacion/delete/${idHabitacion}`, {
+  method: 'DELETE',
       })
         .then((response) => {
           if (response.ok) {
@@ -88,7 +117,7 @@ function HabitacionList() {
           alert('Ocurrió un error al eliminar la habitación. Por favor, verifica tu conexión a Internet o inténtalo de nuevo más tarde.');
         });
     }
-  };
+  }; 
 
   // Realiza una solicitud GET al servidor para obtener la lista de habitaciones al cargar el componente
   useEffect(() => {

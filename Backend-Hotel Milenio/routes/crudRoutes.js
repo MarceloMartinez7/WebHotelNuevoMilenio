@@ -441,21 +441,21 @@ router.delete('/deleteEmpleado/:idEmpleado/:idPersona', (req, res) => {
 
     router.get('/ListarHabitaciones', (req, res) => {
         // Realiza una consulta SQL para seleccionar todos los registros de Habitacion y sus datos relacionados de Tipo_de_habitacion y Estado
-        const sql = `
-        SELECT
-    Habitacion.ID_Habitacion,
-    Habitacion.N_de_habitacion,
-    Tipo_de_habitacion.Nombre AS Tipo_Habitacion,
-    Habitacion.Num_Cama,
-    Estado.NombreEstado AS Estado_Habitacion,
-    Habitacion.Precio
-FROM
-    Habitacion
-INNER JOIN
-    Tipo_de_habitacion ON Habitacion.ID_tipoHabitacion = Tipo_de_habitacion.ID_tipoHabitacion
-INNER JOIN
-    Estado ON Habitacion.ID_Estado = Estado.ID_Estado;
-        `;
+                    const sql = `
+                    SELECT
+                Habitacion.ID_Habitacion,
+                Habitacion.N_de_habitacion,
+                Tipo_de_habitacion.Nombre AS Tipo_Habitacion,
+                Habitacion.Num_Cama,
+                Estado.NombreEstado AS Estado_Habitacion,
+                Habitacion.Precio
+            FROM
+                Habitacion
+            INNER JOIN
+                Tipo_de_habitacion ON Habitacion.ID_tipoHabitacion = Tipo_de_habitacion.ID_tipoHabitacion
+            INNER JOIN
+                Estado ON Habitacion.ID_Estado = Estado.ID_Estado;
+                    `;
     
         // Ejecuta la consulta
         db.query(sql, (err, result) => {
@@ -470,7 +470,26 @@ INNER JOIN
     });
     
 
-    // Ruta para eliminar un registro existente de Habitacion por ID
+
+
+
+    router.delete('/habitacion/delete/:id', (req, res) => {
+        // Obtén el ID de la habitación a eliminar desde los parámetros de la URL
+        const id = req.params.id;
+        // Realiza la consulta SQL para eliminar la habitación por su ID
+        const sql = 'DELETE FROM Habitacion WHERE ID_Habitacion = ?';
+        // Ejecuta la consulta
+        db.query(sql, [id], (err, result) => {
+            if (err) {
+                console.error('Error al eliminar la habitación:', err);
+                res.status(500).json({ error: 'Error al eliminar la habitación' });
+            } else {
+                res.status(200).json({ message: 'Habitación eliminada con éxito' });
+            }
+        });
+    });
+
+   /*  // Ruta para eliminar un registro existente de Habitacion por ID
     router.delete('/habitacion/delete/:id', (req, res) => {
         // Obtén el ID del registro a eliminar desde los parámetros de la URL
         const id = req.params.id;
@@ -486,7 +505,7 @@ INNER JOIN
                 res.status(200).json({ message: 'Registro de Habitacion eliminado con éxito' });
             }
         });
-    });
+    }); */
 
 
     router.post('/reservacionCreate', (req, res) => {
