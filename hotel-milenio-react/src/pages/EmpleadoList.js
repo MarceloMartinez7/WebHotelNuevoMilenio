@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Card, Row, Col, Form, Modal, FloatingLabel } from 'react-bootstrap';
 import Header from '../components/Header';
+import { FaTrashCan, FaPencil } from 'react-icons/fa6';
 
 
 function EmpleadoList() {
@@ -17,6 +18,41 @@ function EmpleadoList() {
     Contraseña: ""
     
   });
+
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+
+  const filteredEmpleado = empleado.filter((empleado) => {
+    // Convierte los valores de los campos a minúsculas para realizar una búsqueda insensible a mayúsculas y minúsculas
+    const nombre1 = empleado.Nombre1.toLowerCase();
+    const nombre2 = empleado.Nombre2.toLowerCase();
+    const apellido1 = empleado.Apellido1.toLowerCase();
+    const apellido2 = empleado.Apellido2.toLowerCase();
+    const telefono = empleado.Telefono.toLowerCase();
+    const usuario = empleado.Usuario.toLowerCase();
+    const contraseña = empleado.Contraseña.toLowerCase();
+  
+    const search = searchQuery.toLowerCase();
+  
+    // Verifica si la cadena de búsqueda se encuentra en alguno de los campos
+    return (
+      nombre1.includes(search) ||
+      nombre2.includes(search) ||
+      apellido1.includes(search) ||
+      apellido2.includes(search) ||
+      telefono.includes(search) ||
+      usuario.includes(search) ||
+      contraseña.includes(search)
+    );
+  });
+  
+  
+
+ 
 
   // Función para abrir el modal y pasar los datos del empleado seleccionado
   const openModal = (empleado) => {
@@ -119,6 +155,23 @@ function EmpleadoList() {
       <Card className="m-3">
         <Card.Body>
           <Card.Title className="mb-3">Listado de Empleado</Card.Title>
+
+          <Row className="mb-3">
+            <Col sm="6" md="6" lg="4">
+              <FloatingLabel controlId="search" label="Buscar">
+                <Form.Control
+                  type="text"
+                  placeholder="Buscar"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
+              </FloatingLabel>
+            </Col>
+          </Row>
+
+
+
+
           <Table striped bordered hover>
             <thead>
               <tr>
@@ -135,7 +188,7 @@ function EmpleadoList() {
               </tr>
             </thead>
             <tbody>
-              {empleado.map((empleado) => (
+              {filteredEmpleado.map((empleado) => (
                 <tr key={empleado.ID_Empleado}>
                   <td>{empleado.ID_Empleado}</td>
                   <td>{empleado.ID_Persona}</td>
@@ -147,8 +200,8 @@ function EmpleadoList() {
                   <td>{empleado.Usuario}</td>
                   <td>{empleado.Contraseña}</td>
                   <td>
-                    <Button variant="primary" onClick={() => openModal(empleado)}>Actualizar</Button>
-                    <Button variant="danger" onClick={() => handleDelete(empleado.ID_Empleado, empleado.ID_Persona)}>Eliminar</Button>
+                    <Button variant="primary" onClick={() => openModal(empleado)}>Actualizar <FaPencil /></Button>
+                    <Button variant="danger" onClick={() => handleDelete(empleado.ID_Empleado, empleado.ID_Persona)}>Eliminar <FaTrashCan /></Button>
                   </td>
                 </tr>
               ))}

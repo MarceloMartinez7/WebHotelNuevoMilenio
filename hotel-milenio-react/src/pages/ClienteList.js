@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Card, Row, Col, Form, Modal, FloatingLabel } from 'react-bootstrap';
 import Header from '../components/Header';
+import { FaTrashCan, FaPencil } from 'react-icons/fa6';
 
 function ClienteList() {
   const [cliente, setcliente] = useState([]);
@@ -15,6 +16,45 @@ function ClienteList() {
     Telefono: "",
     Procedencia: ""
   });
+
+
+
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredCliente = cliente.filter((cliente) => {
+    // Verifica si cliente tiene propiedades y son cadenas de texto válidas
+    if (cliente && typeof cliente === 'object') {
+      const nombre1 = cliente.Nombre1 ? cliente.Nombre1.toLowerCase() : '';
+      const nombre2 = cliente.Nombre2 ? cliente.Nombre2.toLowerCase() : '';
+      const apellido1 = cliente.Apellido1 ? cliente.Apellido1.toLowerCase() : '';
+      const apellido2 = cliente.Apellido2 ? cliente.Apellido2.toLowerCase() : '';
+      const telefono = cliente.Telefono ? cliente.Telefono.toLowerCase() : '';
+      const usuario = cliente.Usuario ? cliente.Usuario.toLowerCase() : '';
+      const contraseña = cliente.Contraseña ? cliente.Contraseña.toLowerCase() : '';
+  
+      const search = searchQuery.toLowerCase();
+  
+      // Verifica si la cadena de búsqueda se encuentra en alguno de los campos
+      return (
+        nombre1.includes(search) ||
+        nombre2.includes(search) ||
+        apellido1.includes(search) ||
+        apellido2.includes(search) ||
+        telefono.includes(search) ||
+        usuario.includes(search) ||
+        contraseña.includes(search)
+      );
+    } else {
+      // Si cliente no tiene propiedades válidas, no hay coincidencia en la búsqueda
+      return false;
+    }
+  });
+
+
 
   // Función para abrir el modal y pasar los datos del cliente seleccionado
   const openModal = (cliente) => {
@@ -117,6 +157,22 @@ function ClienteList() {
       <Card className="m-3">
         <Card.Body>
           <Card.Title className="mb-3">Listado de Cliente</Card.Title>
+
+          <Row className="mb-3">
+            <Col sm="6" md="6" lg="4">
+              <FloatingLabel controlId="search" label="Buscar">
+                <Form.Control
+                  type="text"
+                  placeholder="Buscar"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
+              </FloatingLabel>
+            </Col>
+          </Row>
+
+
+
           <Table striped bordered hover>
             <thead>
               <tr>
@@ -133,7 +189,7 @@ function ClienteList() {
               </tr>
             </thead>
             <tbody>
-              {cliente.map((cliente) => (
+              {filteredCliente.map((cliente) => (
                 <tr key={cliente.ID_cliente}>
                   <td>{cliente.ID_cliente}</td>
                   <td>{cliente.ID_Persona}</td>
@@ -145,8 +201,8 @@ function ClienteList() {
                   <td>{cliente.Telefono}</td>
                   <td>{cliente.Procedencia}</td>
                   <td>
-                    <Button variant="primary" onClick={() => openModal(cliente)}>Actualizar</Button>
-                    <Button variant="danger" onClick={() => handleDelete(cliente.ID_cliente, cliente.ID_Persona)}>Eliminar</Button>
+                    <Button variant="primary" onClick={() => openModal(cliente)}>Actualizar <FaPencil /></Button>
+                    <Button variant="danger" onClick={() => handleDelete(cliente.ID_cliente, cliente.ID_Persona)}>Eliminar  <FaTrashCan /></Button>
                   </td>
                 </tr>
               ))}
