@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Card, Row, Col, Form, Modal, FloatingLabel } from 'react-bootstrap';
-import Header from '../components/Header';
 import { FaTrashCan, FaPencil } from 'react-icons/fa6';
+import Header from '../components/Header';
 
-function ClienteList() {
-  const [cliente, setcliente] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedCliente, setSelectedCliente] = useState({});
-  const [formData, setFormData] = useState({
-    Cedula: "",
-    Nombre1: "",
-    Nombre2: "",
-    Apellido1: "",
-    Apellido2: "",
-    Telefono: "",
-    Procedencia: ""
-  });
-
+function ClienteList({ handleClienteSelect }) {
+    const [clientes, setClientes] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedCliente, setSelectedCliente] = useState({});
+    const [formData, setFormData] = useState({
+        Cedula: "",
+        Nombre1: "",
+        Nombre2: "",
+        Apellido1: "",
+        Apellido2: "",
+        Telefono: "",
+        Procedencia: ""
+    });
 
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,42 +24,30 @@ function ClienteList() {
     setSearchQuery(e.target.value);
   };
 
-  const filteredCliente = cliente.filter((cliente) => {
-    // Verifica si cliente tiene propiedades y son cadenas de texto válidas
+  const filteredClientes = clientes.filter((cliente) => {
     if (cliente && typeof cliente === 'object') {
       const nombre1 = cliente.Nombre1 ? cliente.Nombre1.toLowerCase() : '';
       const nombre2 = cliente.Nombre2 ? cliente.Nombre2.toLowerCase() : '';
       const apellido1 = cliente.Apellido1 ? cliente.Apellido1.toLowerCase() : '';
       const apellido2 = cliente.Apellido2 ? cliente.Apellido2.toLowerCase() : '';
       const telefono = cliente.Telefono ? cliente.Telefono.toLowerCase() : '';
-      const usuario = cliente.Usuario ? cliente.Usuario.toLowerCase() : '';
-      const contraseña = cliente.Contraseña ? cliente.Contraseña.toLowerCase() : '';
-  
+
       const search = searchQuery.toLowerCase();
-  
-      // Verifica si la cadena de búsqueda se encuentra en alguno de los campos
+
       return (
         nombre1.includes(search) ||
         nombre2.includes(search) ||
         apellido1.includes(search) ||
         apellido2.includes(search) ||
-        telefono.includes(search) ||
-        usuario.includes(search) ||
-        contraseña.includes(search)
+        telefono.includes(search)
       );
     } else {
-      // Si cliente no tiene propiedades válidas, no hay coincidencia en la búsqueda
       return false;
     }
   });
 
-
-
-  // Función para abrir el modal y pasar los datos del cliente seleccionado
   const openModal = (cliente) => {
     setSelectedCliente(cliente);
-
-    // Convertir las claves de cliente a minúsculas y asignarlas a formData
     setFormData({
       Cedula: cliente.Cedula,
       Nombre1: cliente.Nombre1,
@@ -73,9 +60,6 @@ function ClienteList() {
     setShowModal(true);
   };
 
-
-
-  // Función para manejar cambios en el formulario
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -84,17 +68,14 @@ function ClienteList() {
     });
   };
 
-  const loadCliente = () => {
+  const loadClientes = () => {
     fetch('http://localhost:5000/crud/ListarClientes')
       .then((response) => response.json())
-      .then((data) => setcliente(data))
+      .then((data) => setClientes(data))
       .catch((error) => console.error('Error al obtener los clientes y personas:', error));
   };
 
-
-  // Función para enviar el formulario de actualización
   const handleUpdate = () => {
-    // Realiza la solicitud PUT al servidor para actualizar el registro
     fetch(`http://localhost:5000/crud/updateCliente/${selectedCliente.ID_Persona}`, {
       method: 'PUT',
       headers: {
@@ -104,60 +85,54 @@ function ClienteList() {
     })
       .then((response) => {
         if (response.ok) {
-          // La actualización fue exitosa, puedes cerrar el modal y refrescar la lista de cliente
           setShowModal(false);
-          loadCliente(); // Cargar la lista de cliente actualizada
+          loadClientes();
         }
       })
       .catch((error) => console.error('Error al actualizar el registro:', error));
   };
 
-
-
   const handleDelete = (idCliente, idPersona) => {
-
-
-    console.log("idCliente:", idCliente);
-    console.log("idPersona:", idPersona);
     const confirmation = window.confirm('¿Seguro que deseas eliminar este Cliente?');
     if (confirmation) {
-        // Realiza la solicitud DELETE al servidor para eliminar el Cliente y la Persona
-        fetch(`http://localhost:5000/crud/deleteCliente/${idCliente}/${idPersona}`, {
-            method: 'DELETE',
-        })
+      fetch(`http://localhost:5000/crud/deleteCliente/${idCliente}/${idPersona}`, {
+        method: 'DELETE',
+      })
         .then((response) => {
-            if (response.ok) {
-                // La eliminación fue exitosa, refresca la lista de Cliente
-                loadCliente();
-                alert('Cliente eliminado con éxito.');
-            } else {
-                alert('Error al eliminar el Cliente. Por favor, inténtalo de nuevo más tarde.');
-            }
+          if (response.ok) {
+            loadClientes();
+            alert('Cliente eliminado con éxito.');
+          } else {
+            alert('Error al eliminar el Cliente. Por favor, inténtalo de nuevo más tarde.');
+          }
         })
         .catch((error) => {
-            console.error('Error al eliminar el Cliente:', error);
-            alert('Ocurrió un error al eliminar el Cliente. Por favor, verifica tu conexión a Internet o inténtalo de nuevo más tarde.');
+          console.error('Error al eliminar el Cliente:', error);
+          alert('Ocurrió un error al eliminar el Cliente. Por favor, verifica tu conexión a Internet o inténtalo de nuevo más tarde.');
         });
     }
+  };
+
+  // Nueva función para seleccionar un cliente
+const handleSelectCliente = (idCliente, nombre, apellido) => {
+  handleClienteSelect({
+    ID_cliente: idCliente,
+    Nombre1: nombre,
+    Apellido1: apellido,
+  });
 };
 
 
-  // Realiza una solicitud GET al servidor para obtener los Cliente
   useEffect(() => {
-    fetch('http://localhost:5000/crud/ListarClientes')
-      .then((response) => response.json())
-      .then((data) => setcliente(data))
-      .catch((error) => console.error('Error al obtener los Cliente y personas:', error));
+    loadClientes();
   }, []);
 
   return (
     <div>
       <Header />
-
       <Card className="m-3">
         <Card.Body>
-          <Card.Title className="mb-3">Listado de Cliente</Card.Title>
-
+          <Card.Title className="mb-3">Listado de Clientes</Card.Title>
           <Row className="mb-3">
             <Col sm="6" md="6" lg="4">
               <FloatingLabel controlId="search" label="Buscar">
@@ -170,14 +145,10 @@ function ClienteList() {
               </FloatingLabel>
             </Col>
           </Row>
-
-
-
           <Table striped bordered hover>
             <thead>
               <tr>
                 <th>ID</th>
-                <th>ID_2</th>
                 <th>Cedula</th>
                 <th>Nombre1</th>
                 <th>Nombre2</th>
@@ -185,14 +156,13 @@ function ClienteList() {
                 <th>Apellido2</th>
                 <th>Telefono</th>
                 <th>Procedencia</th>
-
+                <th>Seleccionar</th>
               </tr>
             </thead>
             <tbody>
-              {filteredCliente.map((cliente) => (
+              {filteredClientes.map((cliente) => (
                 <tr key={cliente.ID_cliente}>
                   <td>{cliente.ID_cliente}</td>
-                  <td>{cliente.ID_Persona}</td>
                   <td>{cliente.Cedula}</td>
                   <td>{cliente.Nombre1}</td>
                   <td>{cliente.Nombre2}</td>
@@ -201,8 +171,10 @@ function ClienteList() {
                   <td>{cliente.Telefono}</td>
                   <td>{cliente.Procedencia}</td>
                   <td>
-                    <Button variant="primary" onClick={() => openModal(cliente)}>Actualizar <FaPencil /></Button>
-                    <Button variant="danger" onClick={() => handleDelete(cliente.ID_cliente, cliente.ID_Persona)}>Eliminar  <FaTrashCan /></Button>
+                    <Button variant="primary" onClick={() => openModal(cliente)}>Actualizar<FaPencil /></Button>
+                    <Button variant="danger" onClick={() => handleDelete(cliente.ID_cliente, cliente.ID_Persona)}>Eliminar <FaTrashCan /></Button>
+                    {/* Llamamos a la nueva función para seleccionar el cliente */}
+                    <Button variant="success" onClick={() => handleSelectCliente(cliente.ID_cliente, cliente.Nombre1, cliente.Apellido1)}>Seleccionar</Button>
                   </td>
                 </tr>
               ))}
@@ -210,7 +182,6 @@ function ClienteList() {
           </Table>
         </Card.Body>
       </Card>
-
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>Actualizar Cliente</Modal.Title>
@@ -221,9 +192,6 @@ function ClienteList() {
               <Card.Title>Registro de Cliente</Card.Title>
               <Form className="mt-3">
                 <Row className="g-3">
-
-
-
                   <Col sm="6" md="6" lg="4">
                     <FloatingLabel controlId="cedula" label="Cedula">
                       <Form.Control
@@ -235,9 +203,6 @@ function ClienteList() {
                       />
                     </FloatingLabel>
                   </Col>
-
-
-
                   <Col sm="6" md="6" lg="4">
                     <FloatingLabel controlId="nombre1" label="Primer Nombre">
                       <Form.Control
@@ -249,9 +214,6 @@ function ClienteList() {
                       />
                     </FloatingLabel>
                   </Col>
-
-
-
                   <Col sm="6" md="6" lg="4">
                     <FloatingLabel controlId="nombre2" label="Segundo Nombre">
                       <Form.Control
@@ -263,8 +225,6 @@ function ClienteList() {
                       />
                     </FloatingLabel>
                   </Col>
-
-
                   <Col sm="6" md="6" lg="4">
                     <FloatingLabel controlId="apellido1" label="Primer apellido">
                       <Form.Control
@@ -276,7 +236,6 @@ function ClienteList() {
                       />
                     </FloatingLabel>
                   </Col>
-
                   <Col sm="6" md="6" lg="4">
                     <FloatingLabel controlId="apellido2" label="Segundo apellido">
                       <Form.Control
@@ -288,9 +247,6 @@ function ClienteList() {
                       />
                     </FloatingLabel>
                   </Col>
-
-
-
                   <Col sm="12" md="6" lg="4">
                     <FloatingLabel controlId="telefono" label="Teléfono">
                       <Form.Control
@@ -302,9 +258,8 @@ function ClienteList() {
                       />
                     </FloatingLabel>
                   </Col>
-
                   <Col sm="12" md="6" lg="4">
-                    <FloatingLabel controlId="procedencia" label="procedencia">
+                    <FloatingLabel controlId="procedencia" label="Procedencia">
                       <Form.Control
                         type="text"
                         placeholder="Ingrese la procedencia"
@@ -314,8 +269,6 @@ function ClienteList() {
                       />
                     </FloatingLabel>
                   </Col>
-
-
                 </Row>
               </Form>
             </Card.Body>
@@ -330,7 +283,6 @@ function ClienteList() {
           </Button>
         </Modal.Footer>
       </Modal>
-
     </div>
   );
 }

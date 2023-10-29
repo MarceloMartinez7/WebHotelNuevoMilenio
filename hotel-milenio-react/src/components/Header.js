@@ -10,6 +10,8 @@ function Header() {
     setShowMenu(!showMenu);
   };
 
+  
+
   return (
     <div>
       {/* Navbar principal */}
@@ -50,6 +52,17 @@ function Header() {
 
                 <NavDropdown.Item>
                   <Link to="/actualizar-Empleado" className="link-unstyled">Listar Empleado</Link>
+                </NavDropdown.Item>
+              </NavDropdown>
+
+
+              <NavDropdown title="ReservacionEstancia" id="ReservacionEstancia">
+                <NavDropdown.Item>
+                  <Link to="/ReservacionEstancia" className="link-unstyled">Registrar ReservacionEstancia</Link>
+                </NavDropdown.Item>
+
+                <NavDropdown.Item>
+                  <Link to="/ListadoReservacionEstancia" className="link-unstyled">Listar ReservacionEstancia</Link>
                 </NavDropdown.Item>
               </NavDropdown>
 
@@ -112,6 +125,15 @@ function Header() {
               </NavDropdown.Item>
             </NavDropdown>
             
+            <NavDropdown title="ReservacionEstancia" id="ReservacionEstancia">
+                <NavDropdown.Item>
+                  <Link to="/ReservacionEstancia" className="link-unstyled">Registrar ReservacionEstancia</Link>
+                </NavDropdown.Item>
+
+                <NavDropdown.Item>
+                  <Link to="/ListadoReservacionEstancia" className="link-unstyled">Listar ReservacionEstancia</Link>
+                </NavDropdown.Item>
+              </NavDropdown>
 
             <NavDropdown title="Habitacion" id="Habitacion">
               

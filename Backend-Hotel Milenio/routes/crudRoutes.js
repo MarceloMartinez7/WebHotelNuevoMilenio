@@ -213,37 +213,37 @@ module.exports = (db) => {
 
 
 
-   // Ruta para eliminar un registro existente de Cliente y Persona por ID
-router.delete('/deleteCliente/:idCliente/:idPersona', (req, res) => {
-    // Obtén el ID del registro de Cliente y de la Persona a eliminar desde los parámetros de la URL
-    const idCliente = req.params.idCliente;
-    const idPersona = req.params.idPersona;
+    // Ruta para eliminar un registro existente de Cliente y Persona por ID
+    router.delete('/deleteCliente/:idCliente/:idPersona', (req, res) => {
+        // Obtén el ID del registro de Cliente y de la Persona a eliminar desde los parámetros de la URL
+        const idCliente = req.params.idCliente;
+        const idPersona = req.params.idPersona;
 
-    // Realiza la consulta SQL para eliminar el registro de Cliente por ID
-    const clienteSql = 'DELETE FROM Cliente WHERE ID_cliente = ?';
+        // Realiza la consulta SQL para eliminar el registro de Cliente por ID
+        const clienteSql = 'DELETE FROM Cliente WHERE ID_cliente = ?';
 
-    // Realiza la consulta SQL para eliminar el registro de Persona por ID
-    const personaSql = 'DELETE FROM Persona WHERE ID_Persona = ?';
+        // Realiza la consulta SQL para eliminar el registro de Persona por ID
+        const personaSql = 'DELETE FROM Persona WHERE ID_Persona = ?';
 
-    // Ejecuta la consulta para eliminar el registro de Cliente
-    db.query(clienteSql, [idCliente], (err, result) => {
-        if (err) {
-            console.error('Error al eliminar el registro de Cliente:', err);
-            res.status(500).json({ error: 'Error al eliminar el registro de Cliente' });
-        } else {
-            // Ejecuta la consulta para eliminar el registro de Persona
-            db.query(personaSql, [idPersona], (err, result) => {
-                if (err) {
-                    console.error('Error al eliminar el registro de Persona:', err);
-                    res.status(500).json({ error: 'Error al eliminar el registro de Persona' });
-                } else {
-                    // Devuelve un mensaje de éxito
-                    res.status(200).json({ message: 'Registro de Cliente y Persona eliminados con éxito' });
-                }
-            });
-        }
+        // Ejecuta la consulta para eliminar el registro de Cliente
+        db.query(clienteSql, [idCliente], (err, result) => {
+            if (err) {
+                console.error('Error al eliminar el registro de Cliente:', err);
+                res.status(500).json({ error: 'Error al eliminar el registro de Cliente' });
+            } else {
+                // Ejecuta la consulta para eliminar el registro de Persona
+                db.query(personaSql, [idPersona], (err, result) => {
+                    if (err) {
+                        console.error('Error al eliminar el registro de Persona:', err);
+                        res.status(500).json({ error: 'Error al eliminar el registro de Persona' });
+                    } else {
+                        // Devuelve un mensaje de éxito
+                        res.status(200).json({ message: 'Registro de Cliente y Persona eliminados con éxito' });
+                    }
+                });
+            }
+        });
     });
-});
 
 
 
@@ -317,69 +317,92 @@ router.delete('/deleteCliente/:idCliente/:idPersona', (req, res) => {
 
 
 
-  // Ruta para actualizar un registro existente de Persona por ID
-  router.put('/updateEmpleado/:id', (req, res) => {
-    // Obtén el ID del registro a actualizar desde los parámetros de la URL
-    const id = req.params.id;
+    // Ruta para actualizar un registro existente de Persona por ID
+    router.put('/updateEmpleado/:id', (req, res) => {
+        // Obtén el ID del registro a actualizar desde los parámetros de la URL
+        const id = req.params.id;
 
-    // Recibe los datos actualizados desde el cuerpo de la solicitud (req.body)
-    const {  Nombre1, Nombre2, Apellido1, Apellido2, Telefono,Usuario,Contraseña } = req.body;
+        // Recibe los datos actualizados desde el cuerpo de la solicitud (req.body)
+        const { Nombre1, Nombre2, Apellido1, Apellido2, Telefono, Usuario, Contraseña } = req.body;
 
-    // Verifica si se proporcionaron los datos necesarios
-    if ( !Nombre1 || !Apellido1 || !Telefono) {
-        return res.status(400).json({ error: 'Los campos "Nombre1," "Apellido1," y "Telefono" son obligatorios' });
-    }
+        // Verifica si se proporcionaron los datos necesarios
+        if (!Nombre1 || !Apellido1 || !Telefono) {
+            return res.status(400).json({ error: 'Los campos "Nombre1," "Apellido1," y "Telefono" son obligatorios' });
+        }
 
-    // Realiza la consulta SQL para actualizar el registro de Persona por ID
-    const sql = `
+        // Realiza la consulta SQL para actualizar el registro de Persona por ID
+        const sql = `
     UPDATE Persona
     SET  Nombre1 = ?, Nombre2 = ?, Apellido1 = ?, Apellido2 = ?, Telefono = ?
     WHERE ID_Persona = ?
 `;
 
-    const values = [ Nombre1, Nombre2, Apellido1, Apellido2, Telefono, id];
+        const values = [Nombre1, Nombre2, Apellido1, Apellido2, Telefono, id];
 
-    // Ejecuta la consulta
-    db.query(sql, values, (err, result) => {
-        if (err) {
-            console.error('Error al actualizar el registro de Persona:', err);
-            res.status(500).json({ error: 'Error al actualizar el registro de Persona' });
-        } else {
-            // Devuelve un mensaje de éxito
-            res.status(200).json({ message: 'Registro de Persona actualizado con éxito' });
-        }
+        // Ejecuta la consulta
+        db.query(sql, values, (err, result) => {
+            if (err) {
+                console.error('Error al actualizar el registro de Persona:', err);
+                res.status(500).json({ error: 'Error al actualizar el registro de Persona' });
+            } else {
+                // Devuelve un mensaje de éxito
+                res.status(200).json({ message: 'Registro de Persona actualizado con éxito' });
+            }
+        });
     });
-});
 
 
-     // Ruta para eliminar un registro existente de Cliente y Persona por ID
-router.delete('/deleteEmpleado/:idEmpleado/:idPersona', (req, res) => {
-    // Obtén el ID del registro de Cliente y de la Persona a eliminar desde los parámetros de la URL
-    const idEmpleado= req.params.idEmpleado;
-    const idPersona = req.params.idPersona;
+    // Ruta para eliminar un registro existente de Cliente y Persona por ID
+    router.delete('/deleteEmpleado/:idEmpleado/:idPersona', (req, res) => {
+        // Obtén el ID del registro de Cliente y de la Persona a eliminar desde los parámetros de la URL
+        const idEmpleado = req.params.idEmpleado;
+        const idPersona = req.params.idPersona;
 
-    // Realiza la consulta SQL para eliminar el registro de Empleado por ID
-    const empleadoSql = 'DELETE FROM Empleado WHERE ID_Empleado = ?';
+        // Realiza la consulta SQL para eliminar el registro de Empleado por ID
+        const empleadoSql = 'DELETE FROM Empleado WHERE ID_Empleado = ?';
 
-    // Realiza la consulta SQL para eliminar el registro de Persona por ID
-    const personaSql = 'DELETE FROM Persona WHERE ID_Persona = ?';
+        // Realiza la consulta SQL para eliminar el registro de Persona por ID
+        const personaSql = 'DELETE FROM Persona WHERE ID_Persona = ?';
 
-    // Ejecuta la consulta para eliminar el registro de Empleado
-    db.query(empleadoSql, [idEmpleado], (err, result) => {
+        // Ejecuta la consulta para eliminar el registro de Empleado
+        db.query(empleadoSql, [idEmpleado], (err, result) => {
+            if (err) {
+                console.error('Error al eliminar el registro de Empleado:', err);
+                res.status(500).json({ error: 'Error al eliminar el registro de Empleado' });
+            } else {
+                // Ejecuta la consulta para eliminar el registro de Persona
+                db.query(personaSql, [idPersona], (err, result) => {
+                    if (err) {
+                        console.error('Error al eliminar el registro de Persona:', err);
+                        res.status(500).json({ error: 'Error al eliminar el registro de Persona' });
+                    } else {
+                        // Devuelve un mensaje de éxito
+                        res.status(200).json({ message: 'Registro de Empleado y Persona eliminados con éxito' });
+                    }
+                });
+            }
+        });
+    });
+
+
+
+
+// Ruta para leer registros
+router.get('/ComboEmpleado', (reg, res) => {
+
+
+
+    const sql = 'SELECT E.ID_Empleado, P.Nombre1 AS NombreEmpleado FROM Empleado AS E INNER JOIN Persona AS P ON E.ID_Persona = P.ID_Persona';
+
+
+    // Ejecutar la consulta
+    db.query(sql, (err, result) => {
         if (err) {
-            console.error('Error al eliminar el registro de Empleado:', err);
-            res.status(500).json({ error: 'Error al eliminar el registro de Empleado' });
+            console.error('Error al leer registro:', err);
+            res.status(500).json({ error: 'Error al leer registros' });
         } else {
-            // Ejecuta la consulta para eliminar el registro de Persona
-            db.query(personaSql, [idPersona], (err, result) => {
-                if (err) {
-                    console.error('Error al eliminar el registro de Persona:', err);
-                    res.status(500).json({ error: 'Error al eliminar el registro de Persona' });
-                } else {
-                    // Devuelve un mensaje de éxito
-                    res.status(200).json({ message: 'Registro de Empleado y Persona eliminados con éxito' });
-                }
-            });
+            // Devolver los registros en formato JSON como respuesta
+            res.status(200).json(result);
         }
     });
 });
@@ -456,7 +479,7 @@ INNER JOIN
 INNER JOIN
     Estado ON Habitacion.ID_Estado = Estado.ID_Estado;
         `;
-    
+
         // Ejecuta la consulta
         db.query(sql, (err, result) => {
             if (err) {
@@ -468,7 +491,7 @@ INNER JOIN
             }
         });
     });
-    
+
 
     // Ruta para eliminar un registro existente de Habitacion por ID
     router.delete('/habitacion/delete/:id', (req, res) => {
@@ -489,54 +512,80 @@ INNER JOIN
     });
 
 
+
+    // Ruta para leer registros
+    router.get('/ComboHabitacion', (reg, res) => {
+
+
+
+        const sql = 'SELECT Habitacion.ID_Habitacion, Tipo_de_habitacion.Nombre AS NombreHabitacion FROM Habitacion INNER JOIN Tipo_de_habitacion ON Habitacion.ID_tipoHabitacion = Tipo_de_habitacion.ID_tipoHabitacion';
+
+
+        // Ejecutar la consulta
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.error('Error al leer registro:', err);
+                res.status(500).json({ error: 'Error al leer registros' });
+            } else {
+                // Devolver los registros en formato JSON como respuesta
+                res.status(200).json(result);
+            }
+        });
+    });
+
+
+
+
+
+
     router.post('/reservacionCreate', (req, res) => {
         const { ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, ID_Habitacion } = req.body;
-    
+
         if (!ID_cliente || !F_entrada || !F_salida || !ID_Empleado || !TipoServicio || !ID_Habitacion) {
             return res.status(400).json({ error: 'Todos los campos son obligatorios' });
         }
-    
+
         // Iniciar una transacción para asegurarse de que todas las operaciones se realicen con éxito o ninguna
         db.beginTransaction(function (err) {
             if (err) {
                 return res.status(500).json({ error: 'Error al iniciar la transacción' });
             }
-    
+
             // Insertar un nuevo registro de ReservacionEstancia
             const reservaSql = `INSERT INTO ReservacionEstancia (ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, EstadoReserva) VALUES (?, ?, ?, ?, ?, ?)`;
             const reservaValues = [ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, 'Activo'];
-    
+
             db.query(reservaSql, reservaValues, (err, result) => {
                 if (err) {
                     return db.rollback(() => {
                         res.status(500).json({ error: 'Error al insertar registro de ReservacionEstancia' });
                     });
                 }
-    
+
                 const reservaID = result.insertId; // Obtén el ID de la reserva recién insertada
-    
+
                 // Actualizar el estado de la habitación a "Ocupado"
                 const updateHabitacionSql = `UPDATE Habitacion SET ID_Estado = ? WHERE ID_Habitacion = ?`;
                 const updateHabitacionValues = [2, ID_Habitacion]; // 2 representa el ID_Estado "Ocupado"
-    
+
                 db.query(updateHabitacionSql, updateHabitacionValues, (err, result) => {
                     if (err) {
                         return db.rollback(() => {
                             res.status(500).json({ error: 'Error al actualizar el estado de la habitación' });
                         });
                     }
-    
+
                     // Insertar un nuevo registro en DetalleReservacion con el ID de reserva y el ID de la habitación
                     const detalleSql = `INSERT INTO DetalleReservacion (ID_ReservaEstancia, ID_Habitacion) VALUES (?, ?)`;
                     const detalleValues = [reservaID, ID_Habitacion];
-    
+
                     db.query(detalleSql, detalleValues, (err, result) => {
                         if (err) {
                             return db.rollback(() => {
                                 res.status(500).json({ error: 'Error al insertar registro en DetalleReservacion' });
                             });
                         }
-    
+
                         // Realizar un commit para confirmar todas las operaciones
                         db.commit((err) => {
                             if (err) {
@@ -544,7 +593,7 @@ INNER JOIN
                                     res.status(500).json({ error: 'Error al confirmar la transacción' });
                                 });
                             }
-    
+
                             res.status(201).json({ ID_ReservaEstancia: reservaID });
                         });
                     });
@@ -552,8 +601,8 @@ INNER JOIN
             });
         });
     });
-    
-    
+
+
 
     // Ruta para actualizar un registro existente de ReservacionEstancia por ID
     router.put('/reservacion/update/:id', (req, res) => {
