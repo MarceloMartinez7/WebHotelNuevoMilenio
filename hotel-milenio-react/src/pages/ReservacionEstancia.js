@@ -12,22 +12,21 @@ function ReservacionEstancia() {
         F_salida: "",
         ID_Empleado: "",
         TipoServicio: "",
-        ID_Habitacion: ""
     });
 
-    const [habitaciones, setHabitaciones] = useState([]); // Estado para almacenar las especialidades
+    const [habitaciones, setHabitaciones] = useState([]);
     const [Habitacion, setHabitacion] = useState(''); // Estado para el valor seleccionado
 
+    const [empleados, setEmpleados] = useState([]);
+    const [Empleado, setEmpleado] = useState('');
 
-    const [empleados, setEmpleados] = useState([]); // Estado para almacenar las especialidades
-    const [Empleado, setEmpleado] = useState(''); // Estado para el valor seleccionado
+    const [habitacionesSeleccionadas, setHabitacionesSeleccionadas] = useState([]);
+    const [duracionEstancia, setDuracionEstancia] = useState(0);
 
     useEffect(() => {
-        // Realiza una solicitud a tu ruta para obtener las especialidades
         fetch('http://localhost:5000/crud/ComboHabitacion')
             .then(response => response.json())
             .then(data => {
-                // Actualiza el estado con las especialidades obtenidas
                 setHabitaciones(data);
             })
             .catch(error => {
@@ -35,21 +34,16 @@ function ReservacionEstancia() {
             });
     }, []);
 
-
     useEffect(() => {
-        // Realiza una solicitud a tu ruta para obtener las especialidades
         fetch('http://localhost:5000/crud/ComboEmpleado')
             .then(response => response.json())
             .then(data => {
-                // Actualiza el estado con las especialidades obtenidas
                 setEmpleados(data);
             })
             .catch(error => {
-                console.error('Error al obtener las habitaciones', error);
+                console.error('Error al obtener los empleados', error);
             });
     }, []);
-
-   
 
     const handleFormChange = (e) => {
         const { name, value } = e.target;
@@ -59,12 +53,83 @@ function ReservacionEstancia() {
         });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        // Aquí puedes enviar los datos del formulario al servidor
-        // Usar formData para enviar los datos al backend
+    const handleHabitacionSelect = (e) => {
+        setHabitacion(e.target.value);
     };
 
+    const addHabitacionToTable = () => {
+        if (Habitacion) {
+            const habitacionSeleccionada = habitaciones.find(habitacion => habitacion.NombreHabitacion === Habitacion);
+    
+            if (habitacionSeleccionada) {
+                if (habitacionSeleccionada.EstadoHabitacion !== "Ocupado") {
+                    setHabitacionesSeleccionadas([...habitacionesSeleccionadas, habitacionSeleccionada]);
+                    // Remove selected habitacion from available habitaciones
+                    setHabitaciones(habitaciones.filter(habitacion => habitacion.ID_Habitacion !== habitacionSeleccionada.ID_Habitacion));
+                    setHabitacion(''); // Clear the selected habitacion
+                } else {
+                    // Muestra un mensaje de error o realiza otra acción si la habitación está ocupada
+                    alert('La habitación seleccionada está ocupada y no se puede agregar.');
+                }
+            }
+        }
+    };
+
+    const handleFechaSalidaChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    
+        // Calcula la duración de la estancia
+        if (formData.F_entrada && value) {
+            const fechaEntrada = new Date(formData.F_entrada);
+            const fechaSalida = new Date(value);
+            const tiempoDiferencia = fechaSalida - fechaEntrada;
+            const diasEstancia = Math.ceil(tiempoDiferencia / (1000 * 60 * 60 * 24)) + 1;
+            setDuracionEstancia(diasEstancia);
+        }
+    };
+
+    // Función para eliminar una habitación de la lista
+    const eliminarHabitacion = (idHabitacion) => {
+        // Encuentra la habitación a eliminar por su ID
+        const habitacionAEliminar = habitacionesSeleccionadas.find(habitacion => habitacion.ID_Habitacion === idHabitacion);
+        
+        // Vuelve a agregar la habitación eliminada a la lista de habitaciones disponibles
+        setHabitaciones([...habitaciones, habitacionAEliminar]);
+
+        // Filtra la habitación eliminada de la lista de habitaciones seleccionadas
+        setHabitacionesSeleccionadas(habitacionesSeleccionadas.filter(habitacion => habitacion.ID_Habitacion !== idHabitacion));
+    };
+
+    // Calcula el costo total de las habitaciones seleccionadas
+    const calcularCostoHabitaciones = () => {
+        let costoTotalHabitaciones = 0;
+        for (const habitacion of habitacionesSeleccionadas) {
+            costoTotalHabitaciones += habitacion.Precio; // Precio por día
+        }
+        return costoTotalHabitaciones;
+    };
+
+    // Calcula el costo total de la estancia
+    const calcularCostoEstancia = () => {
+        const costoHabitaciones = calcularCostoHabitaciones();
+        return costoHabitaciones * duracionEstancia;
+    };
+
+    // Función para manejar el envío del formulario
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        
+        
+        // Aquí puedes enviar los datos del formulario y el costoTotalEstancia al servidor
+        // const costoTotalEstancia = calcularCostoEstancia();
+    };
+
+    
     return (
         <div>
             <Header />
@@ -74,8 +139,6 @@ function ReservacionEstancia() {
                         <Card.Title>Registro de Reservación de Estancia</Card.Title>
                         <Form className="mt-3" onSubmit={handleSubmit}>
                             <Row className="g-3">
-
-
                                 <Col sm="6" md="6" lg="6">
                                     <FloatingLabel controlId="idCliente" label="Cliente">
                                         <Form.Control
@@ -92,9 +155,6 @@ function ReservacionEstancia() {
                                         </Button>
                                     </FloatingLabel>
                                 </Col>
-
-
-
                                 <Col sm="6" md="6" lg="6">
                                     <FloatingLabel controlId="fechaEntrada" label="Fecha de Entrada">
                                         <Form.Control
@@ -111,11 +171,10 @@ function ReservacionEstancia() {
                                             type="date"
                                             name="F_salida"
                                             value={formData.F_salida}
-                                            onChange={handleFormChange}
+                                            onChange={handleFechaSalidaChange}
                                         />
                                     </FloatingLabel>
                                 </Col>
-
                                 <Col sm="12" md="6" lg="4">
                                     <FloatingLabel controlId="idEmpleado" label="Empleado">
                                         <Form.Select
@@ -132,14 +191,6 @@ function ReservacionEstancia() {
                                         </Form.Select>
                                     </FloatingLabel>
                                 </Col>
-
-
-
-
-
-
-
-
                                 <Col sm="6" md="6" lg="6">
                                     <label>Tipo de Servicio:</label>
                                     <div>
@@ -167,16 +218,12 @@ function ReservacionEstancia() {
                                         <label htmlFor="estancia">Estancia</label>
                                     </div>
                                 </Col>
-
-
-
-
                                 <Col sm="12" md="6" lg="4">
                                     <FloatingLabel controlId="idHabitacion" label="Habitacion">
                                         <Form.Select
                                             aria-label="idHabitacion"
                                             value={Habitacion}
-                                            onChange={(e) => setHabitacion(e.target.value)}
+                                            onChange={handleHabitacionSelect}
                                         >
                                             <option>Seleccione la habitacion</option>
                                             {habitaciones.map((habitacion) => (
@@ -186,9 +233,30 @@ function ReservacionEstancia() {
                                             ))}
                                         </Form.Select>
                                     </FloatingLabel>
+                                    <Button variant="primary" onClick={addHabitacionToTable}>Agregar Habitación</Button>
                                 </Col>
-
-
+                            </Row>
+                            <Row className="g-3">
+                                <Col sm="12" md="12" lg="12">
+                                    <FloatingLabel controlId="duracionEstancia" label="Duración de la Estancia (días)">
+                                        <Form.Control
+                                            type="text"
+                                            value={duracionEstancia}
+                                            readOnly
+                                        />
+                                    </FloatingLabel>
+                                </Col>
+                            </Row>
+                            <Row className="g-3">
+                                <Col sm="12" md="12" lg="12">
+                                    <FloatingLabel controlId="costoTotal" label="Costo Total a Pagar">
+                                        <Form.Control
+                                            type="text"
+                                            value={calcularCostoEstancia()}
+                                            readOnly
+                                        />
+                                    </FloatingLabel>
+                                </Col>
                             </Row>
                             <div className="center-button">
                                 <Button variant="primary" type="submit" className="mt-3 custom-button" size="lg">
@@ -208,6 +276,43 @@ function ReservacionEstancia() {
                     <ClienteList handleClienteSelect={setSelectedCliente} />
                 </Modal.Body>
             </Modal>
+
+            <Container>
+                <h2>Habitaciones Seleccionadas:</h2>
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>ID_Habitación</th>
+                            <th>Numero de Habitación</th>
+                            <th>Habitación</th>
+                            <th>Numero de cama</th>
+                            <th>Estado</th>
+                            <th>Precio</th>
+                            <th>Eliminar</th> {/* Agrega una columna para el botón "Eliminar" */}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {habitacionesSeleccionadas.map((habitacion) => (
+                            <tr key={habitacion.ID_Habitacion}>
+                                <td>{habitacion.ID_Habitacion}</td>
+                                <td>{habitacion.N_de_habitacion}</td>
+                                <td>{habitacion.NombreHabitacion}</td>
+                                <td>{habitacion.Num_Cama}</td>
+                                <td>{habitacion.EstadoHabitacion}</td>
+                                <td>{habitacion.Precio}</td>
+                                <td>
+                                    <Button
+                                        variant="danger"
+                                        onClick={() => eliminarHabitacion(habitacion.ID_Habitacion)}
+                                    >
+                                        Eliminar
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </Container>
         </div>
     );
 }

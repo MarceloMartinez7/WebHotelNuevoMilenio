@@ -517,45 +517,26 @@ INNER JOIN
         });
     });
 
-    /*  // Ruta para eliminar un registro existente de Habitacion por ID
-     router.delete('/habitacion/delete/:id', (req, res) => {
-         // Obtén el ID del registro a eliminar desde los parámetros de la URL
-         const id = req.params.id;
-         // Realiza la consulta SQL para eliminar el registro de Habitacion por ID
-         const sql = 'DELETE FROM Habitacion WHERE ID_Habitacion = ?';
-         // Ejecuta la consulta
-         db.query(sql, [id], (err, result) => {
-             if (err) {
-                 console.error('Error al eliminar el registro de Habitacion:', err);
-                 res.status(500).json({ error: 'Error al eliminar el registro de Habitacion' });
-             } else {
-                 // Devuelve un mensaje de éxito
-                 res.status(200).json({ message: 'Registro de Habitacion eliminado con éxito' });
-             }
-         });
-     }); */
+    
 
 
 
-    // Ruta para leer registros
-    router.get('/ComboHabitacion', (reg, res) => {
+    // Ruta para leer registros de Habitación para el combo
+router.get('/ComboHabitacion', (req, res) => {
+    const sql = 'SELECT Habitacion.ID_Habitacion, Habitacion.N_de_habitacion, Tipo_de_habitacion.Nombre AS NombreHabitacion, Habitacion.Num_Cama, Estado.NombreEstado AS EstadoHabitacion, Habitacion.Precio FROM Habitacion INNER JOIN Tipo_de_habitacion ON Habitacion.ID_tipoHabitacion = Tipo_de_habitacion.ID_tipoHabitacion INNER JOIN Estado ON Habitacion.ID_Estado = Estado.ID_Estado';
 
 
-
-        const sql = 'SELECT Habitacion.ID_Habitacion, Tipo_de_habitacion.Nombre AS NombreHabitacion FROM Habitacion INNER JOIN Tipo_de_habitacion ON Habitacion.ID_tipoHabitacion = Tipo_de_habitacion.ID_tipoHabitacion';
-
-
-        // Ejecutar la consulta
-        db.query(sql, (err, result) => {
-            if (err) {
-                console.error('Error al leer registro:', err);
-                res.status(500).json({ error: 'Error al leer registros' });
-            } else {
-                // Devolver los registros en formato JSON como respuesta
-                res.status(200).json(result);
-            }
-        });
+    // Ejecutar la consulta
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error al leer registros de Habitación:', err);
+            res.status(500).json({ error: 'Error al leer registros' });
+        } else {
+            // Devolver los registros en formato JSON como respuesta
+            res.status(200).json(result);
+        }
     });
+});
 
 
 
