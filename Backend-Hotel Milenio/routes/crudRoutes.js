@@ -387,25 +387,25 @@ module.exports = (db) => {
 
 
 
-// Ruta para leer registros
-router.get('/ComboEmpleado', (reg, res) => {
+    // Ruta para leer registros
+    router.get('/ComboEmpleado', (reg, res) => {
 
 
 
-    const sql = 'SELECT E.ID_Empleado, P.Nombre1 AS NombreEmpleado FROM Empleado AS E INNER JOIN Persona AS P ON E.ID_Persona = P.ID_Persona';
+        const sql = 'SELECT E.ID_Empleado, P.Nombre1 AS NombreEmpleado FROM Empleado AS E INNER JOIN Persona AS P ON E.ID_Persona = P.ID_Persona';
 
 
-    // Ejecutar la consulta
-    db.query(sql, (err, result) => {
-        if (err) {
-            console.error('Error al leer registro:', err);
-            res.status(500).json({ error: 'Error al leer registros' });
-        } else {
-            // Devolver los registros en formato JSON como respuesta
-            res.status(200).json(result);
-        }
+        // Ejecutar la consulta
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.error('Error al leer registro:', err);
+                res.status(500).json({ error: 'Error al leer registros' });
+            } else {
+                // Devolver los registros en formato JSON como respuesta
+                res.status(200).json(result);
+            }
+        });
     });
-});
 
 
 
@@ -464,6 +464,7 @@ router.get('/ComboEmpleado', (reg, res) => {
 
     router.get('/ListarHabitaciones', (req, res) => {
         // Realiza una consulta SQL para seleccionar todos los registros de Habitacion y sus datos relacionados de Tipo_de_habitacion y Estado
+
         const sql = `
         SELECT
     Habitacion.ID_Habitacion,
@@ -480,6 +481,10 @@ INNER JOIN
     Estado ON Habitacion.ID_Estado = Estado.ID_Estado;
         `;
 
+
+
+
+
         // Ejecuta la consulta
         db.query(sql, (err, result) => {
             if (err) {
@@ -493,23 +498,42 @@ INNER JOIN
     });
 
 
-    // Ruta para eliminar un registro existente de Habitacion por ID
+
+
+
     router.delete('/habitacion/delete/:id', (req, res) => {
-        // Obtén el ID del registro a eliminar desde los parámetros de la URL
+        // Obtén el ID de la habitación a eliminar desde los parámetros de la URL
         const id = req.params.id;
-        // Realiza la consulta SQL para eliminar el registro de Habitacion por ID
+        // Realiza la consulta SQL para eliminar la habitación por su ID
         const sql = 'DELETE FROM Habitacion WHERE ID_Habitacion = ?';
         // Ejecuta la consulta
         db.query(sql, [id], (err, result) => {
             if (err) {
-                console.error('Error al eliminar el registro de Habitacion:', err);
-                res.status(500).json({ error: 'Error al eliminar el registro de Habitacion' });
+                console.error('Error al eliminar la habitación:', err);
+                res.status(500).json({ error: 'Error al eliminar la habitación' });
             } else {
-                // Devuelve un mensaje de éxito
-                res.status(200).json({ message: 'Registro de Habitacion eliminado con éxito' });
+                res.status(200).json({ message: 'Habitación eliminada con éxito' });
             }
         });
     });
+
+    /*  // Ruta para eliminar un registro existente de Habitacion por ID
+     router.delete('/habitacion/delete/:id', (req, res) => {
+         // Obtén el ID del registro a eliminar desde los parámetros de la URL
+         const id = req.params.id;
+         // Realiza la consulta SQL para eliminar el registro de Habitacion por ID
+         const sql = 'DELETE FROM Habitacion WHERE ID_Habitacion = ?';
+         // Ejecuta la consulta
+         db.query(sql, [id], (err, result) => {
+             if (err) {
+                 console.error('Error al eliminar el registro de Habitacion:', err);
+                 res.status(500).json({ error: 'Error al eliminar el registro de Habitacion' });
+             } else {
+                 // Devuelve un mensaje de éxito
+                 res.status(200).json({ message: 'Registro de Habitacion eliminado con éxito' });
+             }
+         });
+     }); */
 
 
 
