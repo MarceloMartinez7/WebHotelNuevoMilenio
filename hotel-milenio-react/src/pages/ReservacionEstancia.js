@@ -3,6 +3,7 @@ import { Form, Row, Col, Container, FloatingLabel, Card, Button, Modal } from 'r
 import Header from '../components/Header';
 import ClienteList from './ClienteList';
 
+
 function ReservacionEstancia() {
     const [showClientListModal, setShowClientListModal] = useState(false);
     const [selectedCliente, setSelectedCliente] = useState({});
@@ -15,13 +16,15 @@ function ReservacionEstancia() {
     });
 
     const [habitaciones, setHabitaciones] = useState([]);
-    const [Habitacion, setHabitacion] = useState(''); // Estado para el valor seleccionado
+    const [Habitacion, setHabitacion] = useState('');
 
     const [empleados, setEmpleados] = useState([]);
     const [Empleado, setEmpleado] = useState('');
 
     const [habitacionesSeleccionadas, setHabitacionesSeleccionadas] = useState([]);
     const [duracionEstancia, setDuracionEstancia] = useState(0);
+
+    
 
     useEffect(() => {
         fetch('http://localhost:5000/crud/ComboHabitacion')
@@ -60,15 +63,13 @@ function ReservacionEstancia() {
     const addHabitacionToTable = () => {
         if (Habitacion) {
             const habitacionSeleccionada = habitaciones.find(habitacion => habitacion.NombreHabitacion === Habitacion);
-    
+
             if (habitacionSeleccionada) {
                 if (habitacionSeleccionada.EstadoHabitacion !== "Ocupado") {
                     setHabitacionesSeleccionadas([...habitacionesSeleccionadas, habitacionSeleccionada]);
-                    // Remove selected habitacion from available habitaciones
                     setHabitaciones(habitaciones.filter(habitacion => habitacion.ID_Habitacion !== habitacionSeleccionada.ID_Habitacion));
-                    setHabitacion(''); // Clear the selected habitacion
+                    setHabitacion('');
                 } else {
-                    // Muestra un mensaje de error o realiza otra acción si la habitación está ocupada
                     alert('La habitación seleccionada está ocupada y no se puede agregar.');
                 }
             }
@@ -81,8 +82,7 @@ function ReservacionEstancia() {
             ...formData,
             [name]: value,
         });
-    
-        // Calcula la duración de la estancia
+
         if (formData.F_entrada && value) {
             const fechaEntrada = new Date(formData.F_entrada);
             const fechaSalida = new Date(value);
@@ -92,43 +92,69 @@ function ReservacionEstancia() {
         }
     };
 
-    // Función para eliminar una habitación de la lista
     const eliminarHabitacion = (idHabitacion) => {
-        // Encuentra la habitación a eliminar por su ID
         const habitacionAEliminar = habitacionesSeleccionadas.find(habitacion => habitacion.ID_Habitacion === idHabitacion);
-        
-        // Vuelve a agregar la habitación eliminada a la lista de habitaciones disponibles
         setHabitaciones([...habitaciones, habitacionAEliminar]);
-
-        // Filtra la habitación eliminada de la lista de habitaciones seleccionadas
         setHabitacionesSeleccionadas(habitacionesSeleccionadas.filter(habitacion => habitacion.ID_Habitacion !== idHabitacion));
     };
 
-    // Calcula el costo total de las habitaciones seleccionadas
     const calcularCostoHabitaciones = () => {
         let costoTotalHabitaciones = 0;
         for (const habitacion of habitacionesSeleccionadas) {
-            costoTotalHabitaciones += habitacion.Precio; // Precio por día
+            costoTotalHabitaciones += habitacion.Precio;
         }
         return costoTotalHabitaciones;
     };
 
-    // Calcula el costo total de la estancia
     const calcularCostoEstancia = () => {
         const costoHabitaciones = calcularCostoHabitaciones();
         return costoHabitaciones * duracionEstancia;
     };
 
-    // Función para manejar el envío del formulario
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const formattedEntrada = formData.F_entrada ? formatDate(formData.F_entrada) : '';
+    const formattedSalida = formData.F_salida ? formatDate(formData.F_salida) : '';
+
+    const reservaData = {
+        ID_cliente: selectedCliente.ID_cliente,
+        F_entrada: formattedEntrada,
+        F_salida: formattedSalida,
+        ID_Empleado: Empleado,
+        TipoServicio: formData.TipoServicio,
+        habitaciones: habitacionesSeleccionadas.map((habitacion) => habitacion.ID_Habitacion),
         
-        
-        
-        // Aquí puedes enviar los datos del formulario y el costoTotalEstancia al servidor
-        // const costoTotalEstancia = calcularCostoEstancia();
     };
 
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toISOString().split('T')[0];
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log('handleSubmit iniciado');
+    console.log('formData:', formData);
+    console.log('reservaData:', reservaData);
+try{
+    const response = await fetch('http://localhost:5000/crud/reservacionCreate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(reservaData),
+        });
+           
+            
+                if (response.ok) {
+                    alert('Registro exitoso');
+                } else {
+                    alert('No se pudo guardar la reserva. Por favor, inténtelo nuevamente.');
+                }
+            
+            } catch(error)  {
+                console.error('Error al guardar la reserva', error);
+                alert('Hubo un error al enviar la solicitud.');
+            };
+    };
     
     return (
         <div>
@@ -184,7 +210,7 @@ function ReservacionEstancia() {
                                         >
                                             <option>Seleccione el empleado</option>
                                             {empleados.map((empleado) => (
-                                                <option key={empleado.ID_Empleado} value={empleado.NombreEmpleado}>
+                                                <option key={empleado.ID_Empleado} value={empleado.ID_Empleado}>
                                                     {empleado.NombreEmpleado}
                                                 </option>
                                             ))}

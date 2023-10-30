@@ -542,21 +542,23 @@ router.get('/ComboHabitacion', (req, res) => {
 
 
 
+router.post('/reservacionCreate', (req, res) => {
+    const { ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, habitaciones } = req.body;
 
-    router.post('/reservacionCreate', (req, res) => {
-        const { ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, ID_Habitacion } = req.body;
+    if (!ID_cliente || !F_entrada || !F_salida || !ID_Empleado || !TipoServicio || (!habitaciones || habitaciones.length === 0)) {
+        return res.status(400).json({ error: 'Todos los campos son obligatorios, y al menos una habitación debe ser seleccionada' });
+    }
 
-        if (!ID_cliente || !F_entrada || !F_salida || !ID_Empleado || !TipoServicio || !ID_Habitacion) {
-            return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+    db.beginTransaction(function (err) {
+        if (err) {
+            return res.status(500).json({ error: 'Error al iniciar la transacción' });
         }
 
-        // Iniciar una transacción para asegurarse de que todas las operaciones se realicen con éxito o ninguna
-        db.beginTransaction(function (err) {
-            if (err) {
-                return res.status(500).json({ error: 'Error al iniciar la transacción' });
-            }
+        const reservaIDs = []; // Array para almacenar los IDs de las reservas de habitaciones
 
-            // Insertar un nuevo registro de ReservacionEstancia
+        // Itera a través de las habitaciones y registra cada una
+        const insertReserva = () => {
+            const habitacion = habitaciones.pop();
             const reservaSql = `INSERT INTO ReservacionEstancia (ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, EstadoReserva) VALUES (?, ?, ?, ?, ?, ?)`;
             const reservaValues = [ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, 'Activo'];
 
@@ -567,11 +569,11 @@ router.get('/ComboHabitacion', (req, res) => {
                     });
                 }
 
-                const reservaID = result.insertId; // Obtén el ID de la reserva recién insertada
+                const reservaID = result.insertId;
+                reservaIDs.push(reservaID);
 
-                // Actualizar el estado de la habitación a "Ocupado"
                 const updateHabitacionSql = `UPDATE Habitacion SET ID_Estado = ? WHERE ID_Habitacion = ?`;
-                const updateHabitacionValues = [2, ID_Habitacion]; // 2 representa el ID_Estado "Ocupado"
+                const updateHabitacionValues = [2, habitacion];
 
                 db.query(updateHabitacionSql, updateHabitacionValues, (err, result) => {
                     if (err) {
@@ -582,7 +584,7 @@ router.get('/ComboHabitacion', (req, res) => {
 
                     // Insertar un nuevo registro en DetalleReservacion con el ID de reserva y el ID de la habitación
                     const detalleSql = `INSERT INTO DetalleReservacion (ID_ReservaEstancia, ID_Habitacion) VALUES (?, ?)`;
-                    const detalleValues = [reservaID, ID_Habitacion];
+                    const detalleValues = [reservaID, habitacion];
 
                     db.query(detalleSql, detalleValues, (err, result) => {
                         if (err) {
@@ -591,21 +593,32 @@ router.get('/ComboHabitacion', (req, res) => {
                             });
                         }
 
-                        // Realizar un commit para confirmar todas las operaciones
-                        db.commit((err) => {
-                            if (err) {
-                                return db.rollback(() => {
-                                    res.status(500).json({ error: 'Error al confirmar la transacción' });
-                                });
-                            }
+                        if (habitaciones.length > 0) {
+                            insertReserva(); // Procesar la siguiente habitación
+                        } else {
+                            db.commit((err) => {
+                                if (err) {
+                                    return db.rollback(() => {
+                                        res.status(500).json({ error: 'Error al confirmar la transacción' });
+                                    });
+                                }
 
-                            res.status(201).json({ ID_ReservaEstancia: reservaID });
-                        });
+                                res.status(201).json({ ID_ReservaEstancias: reservaIDs });
+                            });
+                        }
                     });
                 });
             });
-        });
+        };
+
+        insertReserva(); // Iniciar el proceso de registro de habitaciones
     });
+});
+
+
+
+
+
 
 
 
