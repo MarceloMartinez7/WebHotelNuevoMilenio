@@ -617,61 +617,140 @@ router.post('/reservacionCreate', (req, res) => {
 
 
 
+router.get('/ListarReservaciones', (req, res) => {
+    // Realiza una consulta SQL para seleccionar todos los registros de Habitacion y sus datos relacionados de Tipo_de_habitacion y Estado
 
-
-
-
-
-    // Ruta para actualizar un registro existente de ReservacionEstancia por ID
-    router.put('/reservacion/update/:id', (req, res) => {
-        // Obtén el ID del registro a actualizar desde los parámetros de la URL
-        const id = req.params.id;
-        // Recibe los datos actualizados desde el cuerpo de la solicitud (req.body)
-        const { ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, EstadoReserva } = req.body;
-        // Verifica si se proporcionaron los datos necesarios
-        if (!ID_cliente || !F_entrada || !F_salida || !ID_Empleado || !TipoServicio || !EstadoReserva) {
-            return res.status(400).json({ error: 'Todos los campos son obligatorios' });
-        }
-        // Realiza la consulta SQL para actualizar el registro de ReservacionEstancia por ID
-        const sql = `
-        UPDATE ReservacionEstancia
-        SET ID_cliente = ?, F_entrada = ?, F_salida = ?, ID_Empleado = ?, TipoServicio = ?, EstadoReserva = ?
-        WHERE ID_ReservaEstancia = ?
+    const sql = `
+    SELECT
+    RE.ID_ReservaEstancia,
+    DR.ID_DetalleReservacion,
+    P.Nombre1 AS Nombre,
+    P.Apellido1 AS Apellido,
+    P.Cedula,
+    RE.F_entrada,
+    RE.F_salida,
+    RE.TipoServicio,
+    RE.EstadoReserva,
+    H.N_de_habitacion,
+    CONCAT(EP.Nombre1, ' ', EP.Apellido1) AS NombreEmpleado
+FROM
+    ReservacionEstancia RE
+    INNER JOIN DetalleReservacion DR ON RE.ID_ReservaEstancia = DR.ID_ReservaEstancia
+    INNER JOIN Cliente C ON RE.ID_cliente = C.ID_cliente
+    INNER JOIN Empleado E ON RE.ID_Empleado = E.ID_Empleado
+    INNER JOIN Persona P ON C.ID_Persona = P.ID_Persona
+    INNER JOIN Persona EP ON E.ID_Persona = EP.ID_Persona
+    INNER JOIN Habitacion H ON DR.ID_Habitacion = H.ID_Habitacion;
     `;
-        const values = [ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, EstadoReserva, id];
-        // Ejecuta la consulta
-        db.query(sql, values, (err, result) => {
+
+
+
+
+
+    // Ejecuta la consulta
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error al recuperar registros de Habitacion:', err);
+            res.status(500).json({ error: 'Error al recuperar registros de Habitacion' });
+        } else {
+            // Devuelve los registros en formato JSON como respuesta
+            res.status(200).json(result);
+        }
+    });
+});
+
+
+
+
+
+router.put('/reservacionUpdate/:id', (req, res) => {
+    const idReserva = req.params.id;
+    const { F_entrada, F_salida, TipoServicio } = req.body;
+
+    if (!F_entrada || !F_salida || !TipoServicio) {
+        return res.status(400).json({ error: 'F_entrada, F_salida y TipoServicio son campos obligatorios' });
+    }
+
+    const updateReservacionSql = `UPDATE ReservacionEstancia
+        SET F_entrada = ?, F_salida = ?, TipoServicio = ?
+        WHERE ID_ReservaEstancia = ?`;
+
+    const updateReservacionValues = [F_entrada, F_salida, TipoServicio, idReserva];
+
+    db.query(updateReservacionSql, updateReservacionValues, (err, result) => {
+        if (err) {
+            console.error('Error al actualizar la reservación:', err);
+            return res.status(500).json({ error: 'Error al actualizar la reservación' });
+        }
+
+        res.status(200).json({ message: 'Reservación actualizada con éxito' });
+    });
+});
+
+
+
+    // Ruta para eliminar un registro de ReservacionEstancia por ID
+router.delete('/deletereserva/:id', (req, res) => {
+    const idReserva = req.params.id;
+
+    db.beginTransaction(function (err) {
+        if (err) {
+            return res.status(500).json({ error: 'Error al iniciar la transacción' });
+        }
+
+        // Eliminar los registros correspondientes en DetalleReservacion
+        const deleteDetalleReservacionSql = `DELETE FROM DetalleReservacion WHERE ID_ReservaEstancia = ?`;
+
+        db.query(deleteDetalleReservacionSql, [idReserva], (err, result) => {
             if (err) {
-                console.error('Error al actualizar el registro de ReservacionEstancia:', err);
-                res.status(500).json({ error: 'Error al actualizar el registro de ReservacionEstancia' });
-            } else {
-                // Devuelve un mensaje de éxito
-                res.status(200).json({ message: 'Registro de ReservacionEstancia actualizado con éxito' });
+                return db.rollback(() => {
+                    res.status(500).json({ error: 'Error al eliminar los registros de DetalleReservacion' });
+                });
             }
+
+            // Ahora que los registros en DetalleReservacion se han eliminado con éxito, procedemos a eliminar la reserva
+            const deleteReservacionSql = `DELETE FROM ReservacionEstancia WHERE ID_ReservaEstancia = ?`;
+
+            db.query(deleteReservacionSql, [idReserva], (err, result) => {
+                if (err) {
+                    return db.rollback(() => {
+                        res.status(500).json({ error: 'Error al eliminar el registro de ReservacionEstancia' });
+                    });
+                }
+
+                // Commit la transacción si todo se hizo correctamente
+                db.commit((err) => {
+                    if (err) {
+                        return db.rollback(() => {
+                            res.status(500).json({ error: 'Error al confirmar la transacción' });
+                        });
+                    }
+
+                    res.status(200).json({ message: 'Registro de ReservacionEstancia eliminado con éxito' });
+                });
+            });
         });
     });
+});
 
 
-    // Ruta para eliminar un registro existente de ReservacionEstancia por ID
-    router.delete('/reservacion/delete/:id', (req, res) => {
-        // Obtén el ID del registro a eliminar desde los parámetros de la URL
-        const id = req.params.id;
-        // Realiza la consulta SQL para eliminar el registro de ReservacionEstancia por ID
-        const sql = 'DELETE FROM ReservacionEstancia WHERE ID_ReservaEstancia = ?';
-        // Ejecuta la consulta
-        db.query(sql, [id], (err, result) => {
-            if (err) {
-                console.error('Error al eliminar el registro de ReservacionEstancia:', err);
-                res.status(500).json({ error: 'Error al eliminar el registro de ReservacionEstancia' });
-            } else {
-                // Devuelve un mensaje de éxito
-                res.status(200).json({ message: 'Registro de ReservacionEstancia eliminado con éxito' });
-            }
-        });
+
+// Ruta para cambiar el estado de una reserva a "Cancelado"
+router.put('/cancelarReserva/:id', (req, res) => {
+    const idReserva = req.params.id;
+  
+    // Realiza una consulta SQL para actualizar el estado de la reserva
+    const updateReservaSql = `UPDATE ReservacionEstancia SET EstadoReserva = 'Cancelado' WHERE ID_ReservaEstancia = ?`;
+  
+    db.query(updateReservaSql, [idReserva], (err, result) => {
+      if (err) {
+        console.error('Error al cambiar el estado de la reserva:', err);
+        return res.status(500).json({ error: 'Error al cambiar el estado de la reserva' });
+      }
+  
+      res.status(200).json({ message: 'Estado de la reserva cambiado a "Cancelado"' });
     });
-
-
-
+  });
 
 
     // DETALLE RESERVA

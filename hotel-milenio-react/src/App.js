@@ -8,6 +8,7 @@ import Empleado from './pages/Empleado';
 import EmpleadoList from './pages/EmpleadoList';
 import HabitacionList from './pages/HabitacionList';
 import ReservacionEstancia from './pages/ReservacionEstancia';
+import ReservacionesList from './pages/ReservacionesList';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/actualizar-Empleado" element={<EmpleadoList />} />
         <Route path="/ListarHabitacion" element={<HabitacionList />} />
         <Route path="/ReservacionEstancia" element={<ReservacionEstancia />} />
+        <Route path="/ListadoReservacionEstancia" element={<ReservacionesList />} />
       </Routes>
     </Router>
   );

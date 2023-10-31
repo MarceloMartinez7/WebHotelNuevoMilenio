@@ -231,6 +231,8 @@ try{
                                         />
                                         <label htmlFor="reserva">Reserva</label>
                                     </div>
+
+                                    
                                     <div>
                                         <input
                                             type="radio"
@@ -243,6 +245,8 @@ try{
                                         />
                                         <label htmlFor="estancia">Estancia</label>
                                     </div>
+
+
                                 </Col>
                                 <Col sm="12" md="6" lg="4">
                                     <FloatingLabel controlId="idHabitacion" label="Habitacion">
