@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import ClienteList from './ClienteList';
 
 
+
 function ReservacionEstancia() {
     const [showClientListModal, setShowClientListModal] = useState(false);
     const [selectedCliente, setSelectedCliente] = useState({});
@@ -165,6 +166,8 @@ try{
                         <Card.Title>Registro de Reservación de Estancia</Card.Title>
                         <Form className="mt-3" onSubmit={handleSubmit}>
                             <Row className="g-3">
+
+
                                 <Col sm="6" md="6" lg="6">
                                     <FloatingLabel controlId="idCliente" label="Cliente">
                                         <Form.Control
@@ -181,6 +184,8 @@ try{
                                         </Button>
                                     </FloatingLabel>
                                 </Col>
+
+
                                 <Col sm="6" md="6" lg="6">
                                     <FloatingLabel controlId="fechaEntrada" label="Fecha de Entrada">
                                         <Form.Control
@@ -191,6 +196,8 @@ try{
                                         />
                                     </FloatingLabel>
                                 </Col>
+
+                                
                                 <Col sm="6" md="6" lg="6">
                                     <FloatingLabel controlId="fechaSalida" label="Fecha de Salida">
                                         <Form.Control
@@ -201,6 +208,8 @@ try{
                                         />
                                     </FloatingLabel>
                                 </Col>
+
+
                                 <Col sm="12" md="6" lg="4">
                                     <FloatingLabel controlId="idEmpleado" label="Empleado">
                                         <Form.Select
@@ -217,6 +226,8 @@ try{
                                         </Form.Select>
                                     </FloatingLabel>
                                 </Col>
+
+
                                 <Col sm="6" md="6" lg="6">
                                     <label>Tipo de Servicio:</label>
                                     <div>

@@ -9,6 +9,8 @@ import EmpleadoList from './pages/EmpleadoList';
 import HabitacionList from './pages/HabitacionList';
 import ReservacionEstancia from './pages/ReservacionEstancia';
 import ReservacionesList from './pages/ReservacionesList';
+import Servicio from './pages/Servicios';
+import ServicioList from './pages/ServiciosList';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
         <Route path="/ListarHabitacion" element={<HabitacionList />} />
         <Route path="/ReservacionEstancia" element={<ReservacionEstancia />} />
         <Route path="/ListadoReservacionEstancia" element={<ReservacionesList />} />
+        <Route path="/Servicios" element={<Servicio />} />
+        <Route path="/ListarServicios" element={<ServicioList />} />
       </Routes>
     </Router>
   );

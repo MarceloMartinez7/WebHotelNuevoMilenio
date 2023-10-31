@@ -753,145 +753,110 @@ router.put('/cancelarReserva/:id', (req, res) => {
   });
 
 
-    // DETALLE RESERVA
-    router.post('/detalle/create', (req, res) => {
-        // Recibe los datos del nuevo registro desde el cuerpo de la solicitud (req.body)
-        const { ID_ReservaEstancia, ID_Habitacion } = req.body;
-        // Verifica si se proporcionaron los datos necesarios
-        if (!ID_ReservaEstancia || !ID_Habitacion) {
-            return res.status(400).json({ error: 'Los campos "ID_ReservaEstancia" e "ID_Habitacion" son obligatorios' });
+  // Ruta para leer la tabla Categoria de la Base de Datos, empleando procedimientos almacenados
+
+router.get('/VerServicios', (req, res) => {
+    // Nombre del procedimiento almacenado
+    const storedProcedure = 'VerServiciosEmpleados';
+  
+    // Llama al procedimiento almacenado
+    db.query(`CALL ${storedProcedure}`, (err, result) => {
+      if (err) {
+        console.error(`Error al ejecutar el procedimiento almacenado ${storedProcedure}:`, err);
+        res.status(500).json({ error: `Error al ejecutar el procedimiento almacenado ${storedProcedure}` });
+      } else {
+        // Devolver los registros en formato JSON como respuesta
+        res.status(200).json(result[0]); // Los resultados están en el primer elemento del array result
+      }
+    });
+  });
+
+
+
+  router.post('/createServicios', (req, res) => {
+    // Recibe los datos del nuevo registro desde el cuerpo de la solicitud (req.body)
+    const { ID_Empleado, NombreServicio, DescripcionServicio } = req.body;
+  
+    // Verifica si se proporcionaron los datos necesarios
+    if (!ID_Empleado || !NombreServicio || !DescripcionServicio) {
+      return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+    }
+  
+    // Nombre del procedimiento almacenado
+    const storedProcedure = 'GuardarServicio';
+  
+    // Llama al procedimiento almacenado
+    db.query(
+      `CALL ${storedProcedure}(?, ?, ?)`,
+      [ID_Empleado, NombreServicio, DescripcionServicio],
+      (err, result) => {
+        if (err) {
+          console.error(`Error al ejecutar el procedimiento almacenado ${storedProcedure}:`, err);
+          res.status(500).json({ error: `Error al ejecutar el procedimiento almacenado ${storedProcedure}` });
+        } else {
+          // Devuelve un mensaje como respuesta
+          res.status(200).json({ message: 'Registro agregado exitosamente' });
         }
-        // Realiza la consulta SQL para insertar un nuevo registro de DetalleReservacion
-        const sql = `INSERT INTO DetalleReservacion (ID_ReservaEstancia, ID_Habitacion) VALUES (?, ?)`;
-        const values = [ID_ReservaEstancia, ID_Habitacion];
-        // Ejecuta la consulta
-        db.query(sql, values, (err, result) => {
-            if (err) {
-                console.error('Error al insertar registro de DetalleReservacion:', err);
-                res.status(500).json({ error: 'Error al insertar registro de DetalleReservacion' });
-            } else {
-                // Devuelve el ID del nuevo registro como respuesta
-                res.status(201).json({ ID_DetalleReservacion: result.insertId });
-            }
-        });
-    });
+      }
+    );
+  });
 
-    // Ruta para actualizar un registro existente de DetalleReservacion por ID
-    router.put('/detalle/update/:id', (req, res) => {
-        // Obtén el ID del registro a actualizar desde los parámetros de la URL
-        const id = req.params.id;
-        // Recibe los datos actualizados desde el cuerpo de la solicitud (req.body)
-        const { ID_ReservaEstancia, ID_Habitacion } = req.body;
-        // Verifica si se proporcionaron los datos necesarios
-        if (!ID_ReservaEstancia || !ID_Habitacion) {
-            return res.status(400).json({ error: 'Los campos "ID_ReservaEstancia" e "ID_Habitacion" son obligatorios' });
+
+
+  router.put('/updateServicios/:ID_Servicios', (req, res) => {
+    // Obtén el ID del registro a actualizar desde los parámetros de la URL
+    const ID_Servicios = req.params.ID_Servicios;
+  
+    // Recibe los datos actualizados desde el cuerpo de la solicitud (req.body)
+    const { NombreServicio, DescripcionServicio } = req.body; // Corregido aquí
+  
+    // Verifica si se proporcionaron los datos necesarios
+    if (!NombreServicio || !DescripcionServicio) { // Corregido aquí
+      return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+    }
+  
+    // Nombre del procedimiento almacenado
+    const storedProcedure = 'EditarServicio';
+  
+    // Llama al procedimiento almacenado
+    db.query(
+      `CALL ${storedProcedure}(?, ?, ?)`,
+      [ID_Servicios, NombreServicio, DescripcionServicio],
+      (err, result) => {
+        if (err) {
+          console.error(`Error al ejecutar el procedimiento almacenado ${storedProcedure}:`, err);
+          res.status(500).json({ error: `Error al ejecutar el procedimiento almacenado ${storedProcedure}` });
+        } else {
+          // Devuelve un mensaje de éxito
+          res.status(200).json({ message: 'Registro actualizado exitosamente' });
         }
-        // Realiza la consulta SQL para actualizar el registro de DetalleReservacion por ID
-        const sql = `
-        UPDATE DetalleReservacion
-        SET ID_ReservaEstancia = ?, ID_Habitacion = ?
-        WHERE ID_DetalleReservacion = ?
-    `;
-        const values = [ID_ReservaEstancia, ID_Habitacion, id];
-        // Ejecuta la consulta
-        db.query(sql, values, (err, result) => {
-            if (err) {
-                console.error('Error al actualizar el registro de DetalleReservacion:', err);
-                res.status(500).json({ error: 'Error al actualizar el registro de DetalleReservacion' });
-            } else {
-                // Devuelve un mensaje de éxito
-                res.status(200).json({ message: 'Registro de DetalleReservacion actualizado con éxito' });
-            }
-        });
-    });
-
-    // Ruta para eliminar un registro existente de DetalleReservacion por ID
-    router.delete('/detalle/delete/:id', (req, res) => {
-        // Obtén el ID del registro a eliminar desde los parámetros de la URL
-        const id = req.params.id;
-        // Realiza la consulta SQL para eliminar el registro de DetalleReservacion por ID
-        const sql = 'DELETE FROM DetalleReservacion WHERE ID_DetalleReservacion = ?';
-        // Ejecuta la consulta
-        db.query(sql, [id], (err, result) => {
-            if (err) {
-                console.error('Error al eliminar el registro de DetalleReservacion:', err);
-                res.status(500).json({ error: 'Error al eliminar el registro de DetalleReservacion' });
-            } else {
-                // Devuelve un mensaje de éxito
-                res.status(200).json({ message: 'Registro de DetalleReservacion eliminado con éxito' });
-            }
-        });
-    });
+      }
+    );
+  });
+  
 
 
-    router.post('/servicios/create', (req, res) => {
-        // Recibe los datos del nuevo registro desde el cuerpo de la solicitud (req.body)
-        const { ID_Empleado, NombreServicio, DescripcionServicio } = req.body;
-        // Verifica si se proporcionaron los datos necesarios
-        if (!ID_Empleado || !NombreServicio || !DescripcionServicio) {
-            return res.status(400).json({ error: 'Los campos "ID_Empleado", "NombreServicio" y "DescripcionServicio" son obligatorios' });
-        }
-        // Realiza la consulta SQL para insertar un nuevo registro de SERVICIOS
-        const sql = `INSERT INTO SERVICIOS (ID_Empleado, NombreServicio, DescripcionServicio) VALUES (?, ?, ?)`;
-        const values = [ID_Empleado, NombreServicio, DescripcionServicio];
-        // Ejecuta la consulta
-        db.query(sql, values, (err, result) => {
-            if (err) {
-                console.error('Error al insertar registro de SERVICIOS:', err);
-                res.status(500).json({ error: 'Error al insertar registro de SERVICIOS' });
-            } else {
-                // Devuelve el ID del nuevo registro como respuesta
-                res.status(201).json({ ID_Servicios: result.insertId });
-            }
-        });
-    });
 
-    // Ruta para actualizar un registro existente de SERVICIOS por ID
-    router.put('/servicios/update/:id', (req, res) => {
-        // Obtén el ID del registro a actualizar desde los parámetros de la URL
-        const id = req.params.id;
-        // Recibe los datos actualizados desde el cuerpo de la solicitud (req.body)
-        const { ID_Empleado, NombreServicio, DescripcionServicio } = req.body;
-        // Verifica si se proporcionaron los datos necesarios
-        if (!ID_Empleado || !NombreServicio || !DescripcionServicio) {
-            return res.status(400).json({ error: 'Los campos "ID_Empleado", "NombreServicio" y "DescripcionServicio" son obligatorios' });
-        }
-        // Realiza la consulta SQL para actualizar el registro de SERVICIOS por ID
-        const sql = `
-        UPDATE SERVICIOS
-        SET ID_Empleado = ?, NombreServicio = ?, DescripcionServicio = ?
-        WHERE ID_Servicios = ?
-    `;
-        const values = [ID_Empleado, NombreServicio, DescripcionServicio, id];
-        // Ejecuta la consulta
-        db.query(sql, values, (err, result) => {
-            if (err) {
-                console.error('Error al actualizar el registro de SERVICIOS:', err);
-                res.status(500).json({ error: 'Error al actualizar el registro de SERVICIOS' });
-            } else {
-                // Devuelve un mensaje de éxito
-                res.status(200).json({ message: 'Registro de SERVICIOS actualizado con éxito' });
-            }
-        });
-    });
+    // Ruta para eliminar registros en la tabla Categoria de la Base de Datos, empleando procedimientos almacenados
 
-    // Ruta para eliminar un registro existente de SERVICIOS por ID
-    router.delete('/servicios/delete/:id', (req, res) => {
-        // Obtén el ID del registro a eliminar desde los parámetros de la URL
-        const id = req.params.id;
-        // Realiza la consulta SQL para eliminar el registro de SERVICIOS por ID
-        const sql = 'DELETE FROM SERVICIOS WHERE ID_Servicios = ?';
-        // Ejecuta la consulta
-        db.query(sql, [id], (err, result) => {
-            if (err) {
-                console.error('Error al eliminar el registro de SERVICIOS:', err);
-                res.status(500).json({ error: 'Error al eliminar el registro de SERVICIOS' });
-            } else {
-                // Devuelve un mensaje de éxito
-                res.status(200).json({ message: 'Registro de SERVICIOS eliminado con éxito' });
-            }
-        });
+router.delete('/deleteServicio/:ID_Servicios', (req, res) => {
+    // Obtén el ID del registro a eliminar desde los parámetros de la URL
+    const ID_Servicios = req.params.ID_Servicios;
+  
+    // Nombre del procedimiento almacenado
+    const storedProcedure = 'EliminarServicio';
+  
+    // Llama al procedimiento almacenado
+    db.query(`CALL ${storedProcedure}(?)`, [ID_Servicios], (err, result) => {
+      if (err) {
+        console.error(`Error al ejecutar el procedimiento almacenado ${storedProcedure}:`, err);
+        res.status(500).json({ error: `Error al ejecutar el procedimiento almacenado ${storedProcedure}` });
+      } else {
+        // Devuelve un mensaje de éxito
+        res.status(200).json({ message: 'Registro eliminado exitosamente' });
+      }
     });
+  });
 
 
 

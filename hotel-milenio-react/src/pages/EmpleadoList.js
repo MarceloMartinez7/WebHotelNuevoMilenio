@@ -92,6 +92,8 @@ function EmpleadoList() {
 
   // Función para enviar el formulario de actualización
   const handleUpdate = () => {
+
+    console.log('Datos a enviar para actualizar:', formData);
     // Realiza la solicitud PUT al servidor para actualizar el registro
     fetch(`http://localhost:5000/crud/updateEmpleado/${selectedEmpleado.ID_Persona}`, {
       method: 'PUT',

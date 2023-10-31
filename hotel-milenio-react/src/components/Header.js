@@ -74,6 +74,17 @@ function Header() {
                   <Link to="/ListarHabitacion" className="link-unstyled">Listar Habitacion</Link>
                 </NavDropdown.Item>
               </NavDropdown>
+
+
+
+              <NavDropdown title="Servicios" id="Servicios">
+              <NavDropdown.Item>
+                <Link to="/Servicios" className="link-unstyled">Registrar Servicios</Link>
+              </NavDropdown.Item>
+              <NavDropdown.Item>
+                <Link to="/ListarServicios" className="link-unstyled">Listar Servicios</Link>
+              </NavDropdown.Item>
+            </NavDropdown>
               
 
             </Nav>
@@ -143,6 +154,17 @@ function Header() {
               </NavDropdown.Item>
             </NavDropdown>
             
+
+
+
+            <NavDropdown title="Servicios" id="Servicios">
+              <NavDropdown.Item>
+                <Link to="/Servicios" className="link-unstyled">Registrar Servicios</Link>
+              </NavDropdown.Item>
+              <NavDropdown.Item>
+                <Link to="/ListarServicios" className="link-unstyled">Listar Servicios</Link>
+              </NavDropdown.Item>
+            </NavDropdown>
 
             
 
