@@ -6,6 +6,7 @@ import { FaTrashCan, FaPencil } from 'react-icons/fa6';
 
 function ServicioList() {
   const [servicio, setservicio] = useState([]);
+
   const [showModal, setShowModal] = useState(false);
   const [selectedServicios, setSelectedServicios] = useState({});
   const [formData, setFormData] = useState({

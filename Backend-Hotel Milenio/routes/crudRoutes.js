@@ -860,6 +860,34 @@ router.delete('/deleteServicio/:ID_Servicios', (req, res) => {
 
 
 
+// Ruta para el inicio de sesión
+router.post('/login', (req, res) => {
+    const { Usuario, Contraseña } = req.body;
+  
+    // Verifica si los campos de Usuario y Contraseña se proporcionan en el cuerpo de la solicitud
+    if (!Usuario || !Contraseña) {
+      return res.status(400).json({ error: 'Usuario y Contraseña son campos obligatorios' });
+    }
+  
+    // Consulta la base de datos para verificar las credenciales del usuario
+    const query = 'SELECT * FROM Empleado WHERE Usuario = ? AND Contraseña = ?';
+    db.query(query, [Usuario, Contraseña], (err, results) => {
+      if (err) {
+        console.error('Error al verificar las credenciales:', err);
+        return res.status(500).json({ error: 'Error al verificar las credenciales' });
+      }
+  
+      // Comprueba si se encontró un empleado con las credenciales proporcionadas
+      if (results.length === 1) {
+        // Autenticación exitosa, devuelve un mensaje de éxito
+        return res.status(200).json({ message: 'Inicio de sesión exitoso' });
+      } else {
+        // Credenciales incorrectas
+        return res.status(401).json({ error: 'Credenciales incorrectas' });
+      }
+    });
+  });
+
 
     // Otras rutas CRUD
     return router;

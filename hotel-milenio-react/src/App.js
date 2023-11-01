@@ -9,24 +9,34 @@ import EmpleadoList from './pages/EmpleadoList';
 import HabitacionList from './pages/HabitacionList';
 import ReservacionEstancia from './pages/ReservacionEstancia';
 import ReservacionesList from './pages/ReservacionesList';
+
+
 import Servicio from './pages/Servicios';
 import ServicioList from './pages/ServiciosList';
+
+// Agregar una nueva importación para el componente de inicio de sesión
+import Login from './pages/login';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        {/* Ruta de inicio de sesión como ruta predeterminada */}
+        <Route path="/" element={<Login />} />
+
+        {/* Otras rutas de la aplicación */}
+        <Route path="/Home" element={<Home />} />
         <Route path="/about" element={<About />} />
-        <Route path="/Cliente" element={<Cliente />} />
+        <Route path="/cliente" element={<Cliente />} />
         <Route path="/actualizar-cliente" element={<ClienteList />} />
-        <Route path="/Empleado" element={<Empleado />} />
-        <Route path="/actualizar-Empleado" element={<EmpleadoList />} />
+        <Route path="/empleado" element={<Empleado />} />
+        <Route path="/actualizar-empleado" element={<EmpleadoList />} />
         <Route path="/ListarHabitacion" element={<HabitacionList />} />
-        <Route path="/ReservacionEstancia" element={<ReservacionEstancia />} />
+        <Route path="/reservacion-estancia" element={<ReservacionEstancia />} />
         <Route path="/ListadoReservacionEstancia" element={<ReservacionesList />} />
-        <Route path="/Servicios" element={<Servicio />} />
-        <Route path="/ListarServicios" element={<ServicioList />} />
+
+        <Route path="/servicios" element={<Servicio />} />
+        <Route path="/listarservicios" element={<ServicioList />} />
       </Routes>
     </Router>
   );
