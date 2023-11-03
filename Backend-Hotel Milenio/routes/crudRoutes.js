@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); //
+
 
 
 module.exports = (db) => {
@@ -415,54 +414,24 @@ module.exports = (db) => {
 
 
 
-    // Ruta para actualizar un registro existente de Habitacion por ID
-router.put('/habitacion/update/:id', upload.single('Imagen'), (req, res) => {
-    const id = req.params.id;
-    const { N_de_habitacion, ID_tipoHabitacion, Num_Cama, ID_Estado, Precio } = req.body;
-    const Imagen = req.file ? req.file.buffer : null; // Aquí se guarda el contenido binario de la imagen
-
-    if (!N_de_habitacion || !ID_tipoHabitacion || !Num_Cama || !ID_Estado || !Precio) {
-      return res.status(400).json({ error: 'Todos los campos son obligatorios' });
-    }
-
-    const sql = `
-      UPDATE Habitacion
-      SET N_de_habitacion = ?, ID_tipoHabitacion = ?, Num_Cama = ?, ID_Estado = ?, Precio = ?, Imagenes = ?
-      WHERE ID_Habitacion = ?
-    `;
-
-    const values = [N_de_habitacion, ID_tipoHabitacion, Num_Cama, ID_Estado, Precio, Imagen, id];
-
-    db.query(sql, values, (err, result) => {
-      if (err) {
-        console.error('Error al actualizar el registro de Habitacion:', err);
-        res.status(500).json({ error: 'Error al actualizar el registro de Habitacion' });
-      } else {
-        res.status(200).json({ message: 'Registro de Habitacion actualizado con éxito' });
-      }
-    });
-});
-
-
-
     router.get('/ListarHabitaciones', (req, res) => {
         const sql = `
-        SELECT
-            Habitacion.ID_Habitacion,
-            Habitacion.N_de_habitacion,
-            Tipo_de_habitacion.Nombre AS Tipo_Habitacion,
-            Habitacion.Num_Cama,
-            Estado.NombreEstado AS Estado_Habitacion,
-            Habitacion.Precio,
-            HEX(Habitacion.Imagenes) AS Imagen
-        FROM
-            Habitacion
-        INNER JOIN
-            Tipo_de_habitacion ON Habitacion.ID_tipoHabitacion = Tipo_de_habitacion.ID_tipoHabitacion
-        INNER JOIN
-            Estado ON Habitacion.ID_Estado = Estado.ID_Estado
-        `;
-    
+  SELECT
+    Habitacion.ID_Habitacion,
+    Habitacion.N_de_habitacion,
+    Tipo_de_habitacion.Nombre AS Tipo_Habitacion,
+    Habitacion.Num_Cama,
+    Estado.NombreEstado AS Estado_Habitacion,
+    Habitacion.Precio,
+    HEX(Habitacion.Imagenes) AS Imagen
+  FROM
+    Habitacion
+  INNER JOIN
+    Tipo_de_habitacion ON Habitacion.ID_tipoHabitacion = Tipo_de_habitacion.ID_tipoHabitacion
+  INNER JOIN
+    Estado ON Habitacion.ID_Estado = Estado.ID_Estado
+`;
+
         db.query(sql, (err, result) => {
             if (err) {
                 console.error('Error al recuperar registros de Habitacion:', err);
@@ -480,7 +449,6 @@ router.put('/habitacion/update/:id', upload.single('Imagen'), (req, res) => {
             }
         });
     });
-    
 
 
 
@@ -488,126 +456,127 @@ router.put('/habitacion/update/:id', upload.single('Imagen'), (req, res) => {
 
 
 
-        router.delete('/habitacion/delete/:id', (req, res) => {
-            // Obtén el ID de la habitación a eliminar desde los parámetros de la URL
-            const id = req.params.id;
-            // Realiza la consulta SQL para eliminar la habitación por su ID
-            const sql = 'DELETE FROM Habitacion WHERE ID_Habitacion = ?';
-            // Ejecuta la consulta
-            db.query(sql, [id], (err, result) => {
-                if (err) {
-                    console.error('Error al eliminar la habitación:', err);
-                    res.status(500).json({ error: 'Error al eliminar la habitación' });
-                } else {
-                    res.status(200).json({ message: 'Habitación eliminada con éxito' });
-                }
-            });
+
+    router.delete('/habitacion/delete/:id', (req, res) => {
+        // Obtén el ID de la habitación a eliminar desde los parámetros de la URL
+        const id = req.params.id;
+        // Realiza la consulta SQL para eliminar la habitación por su ID
+        const sql = 'DELETE FROM Habitacion WHERE ID_Habitacion = ?';
+        // Ejecuta la consulta
+        db.query(sql, [id], (err, result) => {
+            if (err) {
+                console.error('Error al eliminar la habitación:', err);
+                res.status(500).json({ error: 'Error al eliminar la habitación' });
+            } else {
+                res.status(200).json({ message: 'Habitación eliminada con éxito' });
+            }
         });
+    });
 
 
 
 
 
-        // Ruta para leer registros de Habitación para el combo
-        router.get('/ComboHabitacion', (req, res) => {
-            const sql = 'SELECT Habitacion.ID_Habitacion, Habitacion.N_de_habitacion, Tipo_de_habitacion.Nombre AS NombreHabitacion, Habitacion.Num_Cama, Estado.NombreEstado AS EstadoHabitacion, Habitacion.Precio FROM Habitacion INNER JOIN Tipo_de_habitacion ON Habitacion.ID_tipoHabitacion = Tipo_de_habitacion.ID_tipoHabitacion INNER JOIN Estado ON Habitacion.ID_Estado = Estado.ID_Estado';
+    // Ruta para leer registros de Habitación para el combo
+    router.get('/ComboHabitacion', (req, res) => {
+        const sql = 'SELECT Habitacion.ID_Habitacion, Habitacion.N_de_habitacion, Tipo_de_habitacion.Nombre AS NombreHabitacion, Habitacion.Num_Cama, Estado.NombreEstado AS EstadoHabitacion, Habitacion.Precio FROM Habitacion INNER JOIN Tipo_de_habitacion ON Habitacion.ID_tipoHabitacion = Tipo_de_habitacion.ID_tipoHabitacion INNER JOIN Estado ON Habitacion.ID_Estado = Estado.ID_Estado';
 
 
-            // Ejecutar la consulta
-            db.query(sql, (err, result) => {
-                if (err) {
-                    console.error('Error al leer registros de Habitación:', err);
-                    res.status(500).json({ error: 'Error al leer registros' });
-                } else {
-                    // Devolver los registros en formato JSON como respuesta
-                    res.status(200).json(result);
-                }
-            });
+        // Ejecutar la consulta
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.error('Error al leer registros de Habitación:', err);
+                res.status(500).json({ error: 'Error al leer registros' });
+            } else {
+                // Devolver los registros en formato JSON como respuesta
+                res.status(200).json(result);
+            }
         });
+    });
 
 
 
 
 
-        router.post('/reservacionCreate', (req, res) => {
-            const { ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, habitaciones } = req.body;
+    router.post('/reservacionCreate', (req, res) => {
+        const { ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, habitaciones } = req.body;
 
-            if (!ID_cliente || !F_entrada || !F_salida || !ID_Empleado || !TipoServicio || (!habitaciones || habitaciones.length === 0)) {
-                return res.status(400).json({ error: 'Todos los campos son obligatorios, y al menos una habitación debe ser seleccionada' });
+        if (!ID_cliente || !F_entrada || !F_salida || !ID_Empleado || !TipoServicio || (!habitaciones || habitaciones.length === 0)) {
+            return res.status(400).json({ error: 'Todos los campos son obligatorios, y al menos una habitación debe ser seleccionada' });
+        }
+
+        db.beginTransaction(function (err) {
+            if (err) {
+                return res.status(500).json({ error: 'Error al iniciar la transacción' });
             }
 
-            db.beginTransaction(function (err) {
-                if (err) {
-                    return res.status(500).json({ error: 'Error al iniciar la transacción' });
-                }
+            const reservaIDs = []; // Array para almacenar los IDs de las reservas de habitaciones
 
-                const reservaIDs = []; // Array para almacenar los IDs de las reservas de habitaciones
+            // Itera a través de las habitaciones y registra cada una
+            const insertReserva = () => {
+                const habitacion = habitaciones.pop();
+                const reservaSql = `INSERT INTO ReservacionEstancia (ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, EstadoReserva) VALUES (?, ?, ?, ?, ?, ?)`;
+                const reservaValues = [ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, 'Activo'];
 
-                // Itera a través de las habitaciones y registra cada una
-                const insertReserva = () => {
-                    const habitacion = habitaciones.pop();
-                    const reservaSql = `INSERT INTO ReservacionEstancia (ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, EstadoReserva) VALUES (?, ?, ?, ?, ?, ?)`;
-                    const reservaValues = [ID_cliente, F_entrada, F_salida, ID_Empleado, TipoServicio, 'Activo'];
+                db.query(reservaSql, reservaValues, (err, result) => {
+                    if (err) {
+                        return db.rollback(() => {
+                            res.status(500).json({ error: 'Error al insertar registro de ReservacionEstancia' });
+                        });
+                    }
 
-                    db.query(reservaSql, reservaValues, (err, result) => {
+                    const reservaID = result.insertId;
+                    reservaIDs.push(reservaID);
+
+                    const updateHabitacionSql = `UPDATE Habitacion SET ID_Estado = ? WHERE ID_Habitacion = ?`;
+                    const updateHabitacionValues = [2, habitacion];
+
+                    db.query(updateHabitacionSql, updateHabitacionValues, (err, result) => {
                         if (err) {
                             return db.rollback(() => {
-                                res.status(500).json({ error: 'Error al insertar registro de ReservacionEstancia' });
+                                res.status(500).json({ error: 'Error al actualizar el estado de la habitación' });
                             });
                         }
 
-                        const reservaID = result.insertId;
-                        reservaIDs.push(reservaID);
+                        // Insertar un nuevo registro en DetalleReservacion con el ID de reserva y el ID de la habitación
+                        const detalleSql = `INSERT INTO DetalleReservacion (ID_ReservaEstancia, ID_Habitacion) VALUES (?, ?)`;
+                        const detalleValues = [reservaID, habitacion];
 
-                        const updateHabitacionSql = `UPDATE Habitacion SET ID_Estado = ? WHERE ID_Habitacion = ?`;
-                        const updateHabitacionValues = [2, habitacion];
-
-                        db.query(updateHabitacionSql, updateHabitacionValues, (err, result) => {
+                        db.query(detalleSql, detalleValues, (err, result) => {
                             if (err) {
                                 return db.rollback(() => {
-                                    res.status(500).json({ error: 'Error al actualizar el estado de la habitación' });
+                                    res.status(500).json({ error: 'Error al insertar registro en DetalleReservacion' });
                                 });
                             }
 
-                            // Insertar un nuevo registro en DetalleReservacion con el ID de reserva y el ID de la habitación
-                            const detalleSql = `INSERT INTO DetalleReservacion (ID_ReservaEstancia, ID_Habitacion) VALUES (?, ?)`;
-                            const detalleValues = [reservaID, habitacion];
+                            if (habitaciones.length > 0) {
+                                insertReserva(); // Procesar la siguiente habitación
+                            } else {
+                                db.commit((err) => {
+                                    if (err) {
+                                        return db.rollback(() => {
+                                            res.status(500).json({ error: 'Error al confirmar la transacción' });
+                                        });
+                                    }
 
-                            db.query(detalleSql, detalleValues, (err, result) => {
-                                if (err) {
-                                    return db.rollback(() => {
-                                        res.status(500).json({ error: 'Error al insertar registro en DetalleReservacion' });
-                                    });
-                                }
-
-                                if (habitaciones.length > 0) {
-                                    insertReserva(); // Procesar la siguiente habitación
-                                } else {
-                                    db.commit((err) => {
-                                        if (err) {
-                                            return db.rollback(() => {
-                                                res.status(500).json({ error: 'Error al confirmar la transacción' });
-                                            });
-                                        }
-
-                                        res.status(201).json({ ID_ReservaEstancias: reservaIDs });
-                                    });
-                                }
-                            });
+                                    res.status(201).json({ ID_ReservaEstancias: reservaIDs });
+                                });
+                            }
                         });
                     });
-                };
+                });
+            };
 
-                insertReserva(); // Iniciar el proceso de registro de habitaciones
-            });
+            insertReserva(); // Iniciar el proceso de registro de habitaciones
         });
+    });
 
 
 
-        router.get('/ListarReservaciones', (req, res) => {
-            // Realiza una consulta SQL para seleccionar todos los registros de Habitacion y sus datos relacionados de Tipo_de_habitacion y Estado
+    router.get('/ListarReservaciones', (req, res) => {
+        // Realiza una consulta SQL para seleccionar todos los registros de Habitacion y sus datos relacionados de Tipo_de_habitacion y Estado
 
-            const sql = `
+        const sql = `
     SELECT
     RE.ID_ReservaEstancia,
     DR.ID_DetalleReservacion,
@@ -634,246 +603,246 @@ FROM
 
 
 
-            // Ejecuta la consulta
-            db.query(sql, (err, result) => {
-                if (err) {
-                    console.error('Error al recuperar registros de Habitacion:', err);
-                    res.status(500).json({ error: 'Error al recuperar registros de Habitacion' });
-                } else {
-                    // Devuelve los registros en formato JSON como respuesta
-                    res.status(200).json(result);
-                }
-            });
-        });
-
-
-
-
-
-        router.put('/reservacionUpdate/:id', (req, res) => {
-            const idReserva = req.params.id;
-            const { F_entrada, F_salida, TipoServicio } = req.body;
-
-            if (!F_entrada || !F_salida || !TipoServicio) {
-                return res.status(400).json({ error: 'F_entrada, F_salida y TipoServicio son campos obligatorios' });
+        // Ejecuta la consulta
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.error('Error al recuperar registros de Habitacion:', err);
+                res.status(500).json({ error: 'Error al recuperar registros de Habitacion' });
+            } else {
+                // Devuelve los registros en formato JSON como respuesta
+                res.status(200).json(result);
             }
+        });
+    });
 
-            const updateReservacionSql = `UPDATE ReservacionEstancia
+
+
+
+
+    router.put('/reservacionUpdate/:id', (req, res) => {
+        const idReserva = req.params.id;
+        const { F_entrada, F_salida, TipoServicio } = req.body;
+
+        if (!F_entrada || !F_salida || !TipoServicio) {
+            return res.status(400).json({ error: 'F_entrada, F_salida y TipoServicio son campos obligatorios' });
+        }
+
+        const updateReservacionSql = `UPDATE ReservacionEstancia
         SET F_entrada = ?, F_salida = ?, TipoServicio = ?
         WHERE ID_ReservaEstancia = ?`;
 
-            const updateReservacionValues = [F_entrada, F_salida, TipoServicio, idReserva];
+        const updateReservacionValues = [F_entrada, F_salida, TipoServicio, idReserva];
 
-            db.query(updateReservacionSql, updateReservacionValues, (err, result) => {
-                if (err) {
-                    console.error('Error al actualizar la reservación:', err);
-                    return res.status(500).json({ error: 'Error al actualizar la reservación' });
-                }
+        db.query(updateReservacionSql, updateReservacionValues, (err, result) => {
+            if (err) {
+                console.error('Error al actualizar la reservación:', err);
+                return res.status(500).json({ error: 'Error al actualizar la reservación' });
+            }
 
-                res.status(200).json({ message: 'Reservación actualizada con éxito' });
-            });
+            res.status(200).json({ message: 'Reservación actualizada con éxito' });
         });
+    });
 
 
 
-        // Ruta para eliminar un registro de ReservacionEstancia por ID
-        router.delete('/deletereserva/:id', (req, res) => {
-            const idReserva = req.params.id;
+    // Ruta para eliminar un registro de ReservacionEstancia por ID
+    router.delete('/deletereserva/:id', (req, res) => {
+        const idReserva = req.params.id;
 
-            db.beginTransaction(function (err) {
+        db.beginTransaction(function (err) {
+            if (err) {
+                return res.status(500).json({ error: 'Error al iniciar la transacción' });
+            }
+
+            // Eliminar los registros correspondientes en DetalleReservacion
+            const deleteDetalleReservacionSql = `DELETE FROM DetalleReservacion WHERE ID_ReservaEstancia = ?`;
+
+            db.query(deleteDetalleReservacionSql, [idReserva], (err, result) => {
                 if (err) {
-                    return res.status(500).json({ error: 'Error al iniciar la transacción' });
+                    return db.rollback(() => {
+                        res.status(500).json({ error: 'Error al eliminar los registros de DetalleReservacion' });
+                    });
                 }
 
-                // Eliminar los registros correspondientes en DetalleReservacion
-                const deleteDetalleReservacionSql = `DELETE FROM DetalleReservacion WHERE ID_ReservaEstancia = ?`;
+                // Ahora que los registros en DetalleReservacion se han eliminado con éxito, procedemos a eliminar la reserva
+                const deleteReservacionSql = `DELETE FROM ReservacionEstancia WHERE ID_ReservaEstancia = ?`;
 
-                db.query(deleteDetalleReservacionSql, [idReserva], (err, result) => {
+                db.query(deleteReservacionSql, [idReserva], (err, result) => {
                     if (err) {
                         return db.rollback(() => {
-                            res.status(500).json({ error: 'Error al eliminar los registros de DetalleReservacion' });
+                            res.status(500).json({ error: 'Error al eliminar el registro de ReservacionEstancia' });
                         });
                     }
 
-                    // Ahora que los registros en DetalleReservacion se han eliminado con éxito, procedemos a eliminar la reserva
-                    const deleteReservacionSql = `DELETE FROM ReservacionEstancia WHERE ID_ReservaEstancia = ?`;
-
-                    db.query(deleteReservacionSql, [idReserva], (err, result) => {
+                    // Commit la transacción si todo se hizo correctamente
+                    db.commit((err) => {
                         if (err) {
                             return db.rollback(() => {
-                                res.status(500).json({ error: 'Error al eliminar el registro de ReservacionEstancia' });
+                                res.status(500).json({ error: 'Error al confirmar la transacción' });
                             });
                         }
 
-                        // Commit la transacción si todo se hizo correctamente
-                        db.commit((err) => {
-                            if (err) {
-                                return db.rollback(() => {
-                                    res.status(500).json({ error: 'Error al confirmar la transacción' });
-                                });
-                            }
-
-                            res.status(200).json({ message: 'Registro de ReservacionEstancia eliminado con éxito' });
-                        });
+                        res.status(200).json({ message: 'Registro de ReservacionEstancia eliminado con éxito' });
                     });
                 });
             });
         });
+    });
 
 
 
-        // Ruta para cambiar el estado de una reserva a "Cancelado"
-        router.put('/cancelarReserva/:id', (req, res) => {
-            const idReserva = req.params.id;
+    // Ruta para cambiar el estado de una reserva a "Cancelado"
+    router.put('/cancelarReserva/:id', (req, res) => {
+        const idReserva = req.params.id;
 
-            // Realiza una consulta SQL para actualizar el estado de la reserva
-            const updateReservaSql = `UPDATE ReservacionEstancia SET EstadoReserva = 'Cancelado' WHERE ID_ReservaEstancia = ?`;
+        // Realiza una consulta SQL para actualizar el estado de la reserva
+        const updateReservaSql = `UPDATE ReservacionEstancia SET EstadoReserva = 'Cancelado' WHERE ID_ReservaEstancia = ?`;
 
-            db.query(updateReservaSql, [idReserva], (err, result) => {
-                if (err) {
-                    console.error('Error al cambiar el estado de la reserva:', err);
-                    return res.status(500).json({ error: 'Error al cambiar el estado de la reserva' });
-                }
+        db.query(updateReservaSql, [idReserva], (err, result) => {
+            if (err) {
+                console.error('Error al cambiar el estado de la reserva:', err);
+                return res.status(500).json({ error: 'Error al cambiar el estado de la reserva' });
+            }
 
-                res.status(200).json({ message: 'Estado de la reserva cambiado a "Cancelado"' });
-            });
+            res.status(200).json({ message: 'Estado de la reserva cambiado a "Cancelado"' });
         });
+    });
 
 
-        // Ruta para leer la tabla Categoria de la Base de Datos, empleando procedimientos almacenados
+    // Ruta para leer la tabla Categoria de la Base de Datos, empleando procedimientos almacenados
 
-        router.get('/VerServicios', (req, res) => {
-            // Nombre del procedimiento almacenado
-            const storedProcedure = 'VerServiciosEmpleados';
+    router.get('/VerServicios', (req, res) => {
+        // Nombre del procedimiento almacenado
+        const storedProcedure = 'VerServiciosEmpleados';
 
-            // Llama al procedimiento almacenado
-            db.query(`CALL ${storedProcedure}`, (err, result) => {
+        // Llama al procedimiento almacenado
+        db.query(`CALL ${storedProcedure}`, (err, result) => {
+            if (err) {
+                console.error(`Error al ejecutar el procedimiento almacenado ${storedProcedure}:`, err);
+                res.status(500).json({ error: `Error al ejecutar el procedimiento almacenado ${storedProcedure}` });
+            } else {
+                // Devolver los registros en formato JSON como respuesta
+                res.status(200).json(result[0]); // Los resultados están en el primer elemento del array result
+            }
+        });
+    });
+
+
+
+    router.post('/createServicios', (req, res) => {
+        // Recibe los datos del nuevo registro desde el cuerpo de la solicitud (req.body)
+        const { ID_Empleado, NombreServicio, DescripcionServicio } = req.body;
+
+        // Verifica si se proporcionaron los datos necesarios
+        if (!ID_Empleado || !NombreServicio || !DescripcionServicio) {
+            return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+        }
+
+        // Nombre del procedimiento almacenado
+        const storedProcedure = 'GuardarServicio';
+
+        // Llama al procedimiento almacenado
+        db.query(
+            `CALL ${storedProcedure}(?, ?, ?)`,
+            [ID_Empleado, NombreServicio, DescripcionServicio],
+            (err, result) => {
                 if (err) {
                     console.error(`Error al ejecutar el procedimiento almacenado ${storedProcedure}:`, err);
                     res.status(500).json({ error: `Error al ejecutar el procedimiento almacenado ${storedProcedure}` });
                 } else {
-                    // Devolver los registros en formato JSON como respuesta
-                    res.status(200).json(result[0]); // Los resultados están en el primer elemento del array result
+                    // Devuelve un mensaje como respuesta
+                    res.status(200).json({ message: 'Registro agregado exitosamente' });
                 }
-            });
-        });
-
-
-
-        router.post('/createServicios', (req, res) => {
-            // Recibe los datos del nuevo registro desde el cuerpo de la solicitud (req.body)
-            const { ID_Empleado, NombreServicio, DescripcionServicio } = req.body;
-
-            // Verifica si se proporcionaron los datos necesarios
-            if (!ID_Empleado || !NombreServicio || !DescripcionServicio) {
-                return res.status(400).json({ error: 'Todos los campos son obligatorios' });
             }
-
-            // Nombre del procedimiento almacenado
-            const storedProcedure = 'GuardarServicio';
-
-            // Llama al procedimiento almacenado
-            db.query(
-                `CALL ${storedProcedure}(?, ?, ?)`,
-                [ID_Empleado, NombreServicio, DescripcionServicio],
-                (err, result) => {
-                    if (err) {
-                        console.error(`Error al ejecutar el procedimiento almacenado ${storedProcedure}:`, err);
-                        res.status(500).json({ error: `Error al ejecutar el procedimiento almacenado ${storedProcedure}` });
-                    } else {
-                        // Devuelve un mensaje como respuesta
-                        res.status(200).json({ message: 'Registro agregado exitosamente' });
-                    }
-                }
-            );
-        });
+        );
+    });
 
 
 
-        router.put('/updateServicios/:ID_Servicios', (req, res) => {
-            // Obtén el ID del registro a actualizar desde los parámetros de la URL
-            const ID_Servicios = req.params.ID_Servicios;
+    router.put('/updateServicios/:ID_Servicios', (req, res) => {
+        // Obtén el ID del registro a actualizar desde los parámetros de la URL
+        const ID_Servicios = req.params.ID_Servicios;
 
-            // Recibe los datos actualizados desde el cuerpo de la solicitud (req.body)
-            const { NombreServicio, DescripcionServicio } = req.body; // Corregido aquí
+        // Recibe los datos actualizados desde el cuerpo de la solicitud (req.body)
+        const { NombreServicio, DescripcionServicio } = req.body; // Corregido aquí
 
-            // Verifica si se proporcionaron los datos necesarios
-            if (!NombreServicio || !DescripcionServicio) { // Corregido aquí
-                return res.status(400).json({ error: 'Todos los campos son obligatorios' });
-            }
+        // Verifica si se proporcionaron los datos necesarios
+        if (!NombreServicio || !DescripcionServicio) { // Corregido aquí
+            return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+        }
 
-            // Nombre del procedimiento almacenado
-            const storedProcedure = 'EditarServicio';
+        // Nombre del procedimiento almacenado
+        const storedProcedure = 'EditarServicio';
 
-            // Llama al procedimiento almacenado
-            db.query(
-                `CALL ${storedProcedure}(?, ?, ?)`,
-                [ID_Servicios, NombreServicio, DescripcionServicio],
-                (err, result) => {
-                    if (err) {
-                        console.error(`Error al ejecutar el procedimiento almacenado ${storedProcedure}:`, err);
-                        res.status(500).json({ error: `Error al ejecutar el procedimiento almacenado ${storedProcedure}` });
-                    } else {
-                        // Devuelve un mensaje de éxito
-                        res.status(200).json({ message: 'Registro actualizado exitosamente' });
-                    }
-                }
-            );
-        });
-
-
-
-
-        // Ruta para eliminar registros en la tabla Categoria de la Base de Datos, empleando procedimientos almacenados
-
-        router.delete('/deleteServicio/:ID_Servicios', (req, res) => {
-            // Obtén el ID del registro a eliminar desde los parámetros de la URL
-            const ID_Servicios = req.params.ID_Servicios;
-
-            // Nombre del procedimiento almacenado
-            const storedProcedure = 'EliminarServicio';
-
-            // Llama al procedimiento almacenado
-            db.query(`CALL ${storedProcedure}(?)`, [ID_Servicios], (err, result) => {
+        // Llama al procedimiento almacenado
+        db.query(
+            `CALL ${storedProcedure}(?, ?, ?)`,
+            [ID_Servicios, NombreServicio, DescripcionServicio],
+            (err, result) => {
                 if (err) {
                     console.error(`Error al ejecutar el procedimiento almacenado ${storedProcedure}:`, err);
                     res.status(500).json({ error: `Error al ejecutar el procedimiento almacenado ${storedProcedure}` });
                 } else {
                     // Devuelve un mensaje de éxito
-                    res.status(200).json({ message: 'Registro eliminado exitosamente' });
+                    res.status(200).json({ message: 'Registro actualizado exitosamente' });
                 }
-            });
+            }
+        );
+    });
+
+
+
+
+    // Ruta para eliminar registros en la tabla Categoria de la Base de Datos, empleando procedimientos almacenados
+
+    router.delete('/deleteServicio/:ID_Servicios', (req, res) => {
+        // Obtén el ID del registro a eliminar desde los parámetros de la URL
+        const ID_Servicios = req.params.ID_Servicios;
+
+        // Nombre del procedimiento almacenado
+        const storedProcedure = 'EliminarServicio';
+
+        // Llama al procedimiento almacenado
+        db.query(`CALL ${storedProcedure}(?)`, [ID_Servicios], (err, result) => {
+            if (err) {
+                console.error(`Error al ejecutar el procedimiento almacenado ${storedProcedure}:`, err);
+                res.status(500).json({ error: `Error al ejecutar el procedimiento almacenado ${storedProcedure}` });
+            } else {
+                // Devuelve un mensaje de éxito
+                res.status(200).json({ message: 'Registro eliminado exitosamente' });
+            }
         });
+    });
 
 
 
-        // Ruta para el inicio de sesión
-        router.post('/login', (req, res) => {
-            const { Usuario, Contraseña } = req.body;
+    // Ruta para el inicio de sesión
+    router.post('/login', (req, res) => {
+        const { Usuario, Contraseña } = req.body;
 
-            // Verifica si los campos de Usuario y Contraseña se proporcionan en el cuerpo de la solicitud
-            if (!Usuario || !Contraseña) {
-                return res.status(400).json({ error: 'Usuario y Contraseña son campos obligatorios' });
+        // Verifica si los campos de Usuario y Contraseña se proporcionan en el cuerpo de la solicitud
+        if (!Usuario || !Contraseña) {
+            return res.status(400).json({ error: 'Usuario y Contraseña son campos obligatorios' });
+        }
+
+        // Consulta la base de datos para verificar las credenciales del usuario
+        const query = 'SELECT * FROM Empleado WHERE Usuario = ? AND Contraseña = ?';
+        db.query(query, [Usuario, Contraseña], (err, results) => {
+            if (err) {
+                console.error('Error al verificar las credenciales:', err);
+                return res.status(500).json({ error: 'Error al verificar las credenciales' });
             }
 
-            // Consulta la base de datos para verificar las credenciales del usuario
-            const query = 'SELECT * FROM Empleado WHERE Usuario = ? AND Contraseña = ?';
-            db.query(query, [Usuario, Contraseña], (err, results) => {
-                if (err) {
-                    console.error('Error al verificar las credenciales:', err);
-                    return res.status(500).json({ error: 'Error al verificar las credenciales' });
-                }
-
-                // Comprueba si se encontró un empleado con las credenciales proporcionadas
-                if (results.length === 1) {
-                    // Autenticación exitosa, devuelve un mensaje de éxito
-                    return res.status(200).json({ message: 'Inicio de sesión exitoso' });
-                } else {
-                    // Credenciales incorrectas
-                    return res.status(401).json({ error: 'Credenciales incorrectas' });
-                }
-            });
+            // Comprueba si se encontró un empleado con las credenciales proporcionadas
+            if (results.length === 1) {
+                // Autenticación exitosa, devuelve un mensaje de éxito
+                return res.status(200).json({ message: 'Inicio de sesión exitoso' });
+            } else {
+                // Credenciales incorrectas
+                return res.status(401).json({ error: 'Credenciales incorrectas' });
+            }
         });
+    });
 
 
 
@@ -882,11 +851,11 @@ FROM
 
 
 
-        //-----------------------------------------------------------
+    //-----------------------------------------------------------
 
 
 
 
-        // Otras rutas CRUD
-        return router;
-    };
+    // Otras rutas CRUD
+    return router;
+};
