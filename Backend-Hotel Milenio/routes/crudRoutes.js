@@ -7,7 +7,7 @@ const router = express.Router();
 
 module.exports = (db) => {
     // Ruta para leer registros
-    router.get('/read', (reg, res) => {
+    router.get('/TipoHabitacionCombo', (reg, res) => {
         // Utiliza la instancia de la base de datos pasada como parámetro
         // Realizar una consulta SQL para seleccionar todos los registros
 
@@ -27,6 +27,27 @@ module.exports = (db) => {
         });
     });
 
+
+     // Ruta para leer registros
+     router.get('/EstadoCombo', (reg, res) => {
+        // Utiliza la instancia de la base de datos pasada como parámetro
+        // Realizar una consulta SQL para seleccionar todos los registros
+
+
+        const sql = 'SELECT * FROM Estado';
+
+
+        // Ejecutar la consulta
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.error('Error al leer registro:', err);
+                res.status(500).json({ error: 'Error al leer registros' });
+            } else {
+                // Devolver los registros en formato JSON como respuesta
+                res.status(200).json(result);
+            }
+        });
+    });
 
 
     // Ruta para crear un nuevo registro de Tipo_de_habitacion
@@ -411,7 +432,64 @@ module.exports = (db) => {
     });
 
 
+    router.post('/createHabitacion', (req, res) => {
+        // Recibe los datos del nuevo registro desde el cuerpo de la solicitud (req.body)
+        const { ID_Habitacion, N_de_habitacion, ID_tipoHabitacion, Num_Cama, ID_Estado, Precio, Imagenes } = req.body;
+    
+        // Verifica si se proporcionaron los datos necesarios
+        if (!ID_Habitacion || !N_de_habitacion || !ID_tipoHabitacion || !Num_Cama || !ID_Estado || !Precio ) {
+            return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+        }
+    
+        // Realiza la consulta SQL para insertar un nuevo registro en la tabla "Habitacion"
+        const habitacionSql = `
+            INSERT INTO Habitacion (ID_Habitacion, N_de_habitacion, ID_tipoHabitacion, Num_Cama, ID_Estado, Precio, Imagenes)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `;
+        const habitacionValues = [ID_Habitacion, N_de_habitacion, ID_tipoHabitacion, Num_Cama, ID_Estado, Precio, Imagenes];
+    
+        // Ejecuta la consulta para insertar en la tabla "Habitacion"
+        db.query(habitacionSql, habitacionValues, (err, habitacionResult) => {
+            if (err) {
+                console.error('Error al insertar registro de Habitacion:', err);
+                res.status(500).json({ error: 'Error al insertar registro de Habitacion' });
+            } else {
+                // Devuelve el ID de la nueva habitación como respuesta
+                res.status(201).json({ ID_Habitacion: habitacionResult.insertId });
+            }
+        });
+    });
+    
 
+
+ // Ruta para actualizar un registro existente de Habitacion por ID
+ router.put('/habitacion/update/:id', (req, res) => {
+    // Obtén el ID del registro a actualizar desde los parámetros de la URL
+    const id = req.params.id;
+    // Recibe los datos actualizados desde el cuerpo de la solicitud (req.body)
+    const { N_de_habitacion, ID_tipoHabitacion, Num_Cama, ID_Estado, Precio } = req.body;
+    // Verifica si se proporcionaron los datos necesarios
+    if (!N_de_habitacion || !ID_tipoHabitacion || !Num_Cama || !ID_Estado || !Precio) {
+        return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+    }
+    // Realiza la consulta SQL para actualizar el registro de Habitacion por ID
+    const sql = `
+    UPDATE Habitacion
+    SET N_de_habitacion = ?, ID_tipoHabitacion = ?, Num_Cama = ?, ID_Estado = ?, Precio = ?
+    WHERE ID_Habitacion = ?
+`;
+    const values = [N_de_habitacion, ID_tipoHabitacion, Num_Cama, ID_Estado, Precio, id];
+    // Ejecuta la consulta
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error al actualizar el registro de Habitacion:', err);
+            res.status(500).json({ error: 'Error al actualizar el registro de Habitacion' });
+        } else {
+            // Devuelve un mensaje de éxito
+            res.status(200).json({ message: 'Registro de Habitacion actualizado con éxito' });
+        }
+    });
+});    
 
 
     router.get('/ListarHabitaciones', (req, res) => {
@@ -493,6 +571,45 @@ module.exports = (db) => {
             }
         });
     });
+
+
+
+
+
+// Ruta para verificar la disponibilidad de habitaciones
+router.get('/verificarDisponibilidad', (req, res) => {
+    const { fechaEntrada, fechaSalida } = req.query;
+  
+    // Consulta SQL para verificar la disponibilidad
+    const sql = `
+      SELECT h.ID_Habitacion, h.N_de_habitacion, h.NombreHabitacion
+      FROM Habitacion h
+      WHERE h.ID_Habitacion NOT IN (
+        SELECT dr.ID_Habitacion
+        FROM ReservacionEstancia re
+        JOIN DetalleReservacion dr ON re.ID_ReservaEstancia = dr.ID_ReservaEstancia
+        WHERE (
+          (re.F_entrada <= ? AND re.F_salida >= ?)
+          OR
+          (re.F_entrada <= ? AND re.F_salida >= ?)
+          OR
+          (? <= re.F_salida AND ? >= re.F_entrada)
+        )
+      )
+    `;
+  
+    db.query(
+      sql,
+      [fechaEntrada, fechaEntrada, fechaSalida, fechaSalida, fechaEntrada, fechaSalida],
+      (err, results) => {
+        if (err) {
+          res.status(500).json({ error: 'Error al verificar disponibilidad' });
+        } else {
+          res.json({ habitacionesDisponibles: results });
+        }
+      }
+    );
+  });
 
 
 
@@ -817,32 +934,32 @@ FROM
 
 
     // Ruta para el inicio de sesión
-    router.post('/login', (req, res) => {
-        const { Usuario, Contraseña } = req.body;
+router.post('/login', (req, res) => {
+    const { Usuario, Contraseña } = req.body;
 
-        // Verifica si los campos de Usuario y Contraseña se proporcionan en el cuerpo de la solicitud
-        if (!Usuario || !Contraseña) {
-            return res.status(400).json({ error: 'Usuario y Contraseña son campos obligatorios' });
-        }
+    // Verifica si los campos de Usuario y Contraseña se proporcionan en el cuerpo de la solicitud
+    if (!Usuario || !Contraseña) {
+      return res.status(400).json({ error: 'Usuario y Contraseña son campos obligatorios' });
+    }
 
-        // Consulta la base de datos para verificar las credenciales del usuario
-        const query = 'SELECT * FROM Empleado WHERE Usuario = ? AND Contraseña = ?';
-        db.query(query, [Usuario, Contraseña], (err, results) => {
-            if (err) {
-                console.error('Error al verificar las credenciales:', err);
-                return res.status(500).json({ error: 'Error al verificar las credenciales' });
-            }
+    // Consulta la base de datos para verificar las credenciales del usuario
+    const query = 'SELECT * FROM Empleado WHERE Usuario = ? AND Contraseña = ?';
+    db.query(query, [Usuario, Contraseña], (err, results) => {
+      if (err) {
+        console.error('Error al verificar las credenciales:', err);
+        return res.status(500).json({ error: 'Error al verificar las credenciales' });
+      }
 
-            // Comprueba si se encontró un empleado con las credenciales proporcionadas
-            if (results.length === 1) {
-                // Autenticación exitosa, devuelve un mensaje de éxito
-                return res.status(200).json({ message: 'Inicio de sesión exitoso' });
-            } else {
-                // Credenciales incorrectas
-                return res.status(401).json({ error: 'Credenciales incorrectas' });
-            }
-        });
+      // Comprueba si se encontró un empleado con las credenciales proporcionadas
+      if (results.length === 1) {
+        // Autenticación exitosa, devuelve un mensaje de éxito
+        return res.status(200).json({ message: 'Inicio de sesión exitoso' });
+      } else {
+        // Credenciales incorrectas
+        return res.status(401).json({ error: 'Credenciales incorrectas' });
+      }
     });
+  });
 
 
 

@@ -9,6 +9,7 @@ import EmpleadoList from './pages/EmpleadoList';
 import HabitacionList from './pages/HabitacionList';
 import ReservacionEstancia from './pages/ReservacionEstancia';
 import ReservacionesList from './pages/ReservacionesList';
+import Habitacion from './pages/Habitacion';
 
 
 import Servicio from './pages/Servicios';
@@ -31,6 +32,7 @@ function App() {
         <Route path="/actualizar-cliente" element={<ClienteList />} />
         <Route path="/empleado" element={<Empleado />} />
         <Route path="/actualizar-empleado" element={<EmpleadoList />} />
+        <Route path="/Habitacion" element={<Habitacion />} />
         <Route path="/ListarHabitacion" element={<HabitacionList />} />
         <Route path="/ReservacionEstancia" element={<ReservacionEstancia />} />
         <Route path="/ListadoReservacionEstancia" element={<ReservacionesList />} />
