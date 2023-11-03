@@ -64,25 +64,9 @@ function ReservacionEstancia() {
     const addHabitacionToTable = () => {
         if (Habitacion) {
             const habitacionSeleccionada = habitaciones.find(habitacion => habitacion.NombreHabitacion === Habitacion);
-    
+
             if (habitacionSeleccionada) {
-                const fechaEntradaNueva = new Date(formData.F_entrada);
-                const fechaSalidaNueva = new Date(formData.F_salida);
-    
-                // Verifica si hay una colisión de fechas
-                const colision = habitacionesSeleccionadas.some(habitacion => {
-                    const fechaEntradaExistente = new Date(habitacion.F_entrada);
-                    const fechaSalidaExistente = new Date(habitacion.F_salida);
-    
-                    return (
-                        (fechaEntradaNueva <= fechaSalidaExistente && fechaSalidaNueva >= fechaEntradaExistente) ||
-                        (fechaEntradaNueva >= fechaEntradaExistente && fechaSalidaNueva <= fechaSalidaExistente)
-                    );
-                });
-    
-                if (colision) {
-                    alert('No se puede agregar esta habitación debido a una colisión de fechas.');
-                } else if (habitacionSeleccionada.EstadoHabitacion !== "Ocupado") {
+                if (habitacionSeleccionada.EstadoHabitacion !== "Ocupado") {
                     setHabitacionesSeleccionadas([...habitacionesSeleccionadas, habitacionSeleccionada]);
                     setHabitaciones(habitaciones.filter(habitacion => habitacion.ID_Habitacion !== habitacionSeleccionada.ID_Habitacion));
                     setHabitacion('');
@@ -92,7 +76,6 @@ function ReservacionEstancia() {
             }
         }
     };
-    
 
     const handleFechaSalidaChange = (e) => {
         const { name, value } = e.target;

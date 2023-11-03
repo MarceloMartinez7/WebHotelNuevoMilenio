@@ -576,41 +576,8 @@ module.exports = (db) => {
 
 
 
-// Ruta para verificar la disponibilidad de habitaciones
-router.get('/verificarDisponibilidad', (req, res) => {
-    const { fechaEntrada, fechaSalida } = req.query;
-  
-    // Consulta SQL para verificar la disponibilidad
-    const sql = `
-      SELECT h.ID_Habitacion, h.N_de_habitacion, h.NombreHabitacion
-      FROM Habitacion h
-      WHERE h.ID_Habitacion NOT IN (
-        SELECT dr.ID_Habitacion
-        FROM ReservacionEstancia re
-        JOIN DetalleReservacion dr ON re.ID_ReservaEstancia = dr.ID_ReservaEstancia
-        WHERE (
-          (re.F_entrada <= ? AND re.F_salida >= ?)
-          OR
-          (re.F_entrada <= ? AND re.F_salida >= ?)
-          OR
-          (? <= re.F_salida AND ? >= re.F_entrada)
-        )
-      )
-    `;
-  
-    db.query(
-      sql,
-      [fechaEntrada, fechaEntrada, fechaSalida, fechaSalida, fechaEntrada, fechaSalida],
-      (err, results) => {
-        if (err) {
-          res.status(500).json({ error: 'Error al verificar disponibilidad' });
-        } else {
-          res.json({ habitacionesDisponibles: results });
-        }
-      }
-    );
-  });
 
+    
 
 
 
@@ -960,8 +927,6 @@ router.post('/login', (req, res) => {
       }
     });
   });
-
-
 
 
 
