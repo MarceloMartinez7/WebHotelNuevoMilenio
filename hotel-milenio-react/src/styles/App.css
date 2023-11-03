@@ -24,5 +24,10 @@
   
 }
 
+/* En tu archivo CSS */
+.img-habitacion {
+  max-width: 150px;
+  max-height: 150px;
+}
 
 
