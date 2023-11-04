@@ -462,23 +462,68 @@ module.exports = (db) => {
     
 
 
- // Ruta para actualizar un registro existente de Habitacion por ID
- router.put('/habitacion/update/:id', (req, res) => {
+
+
+
+// Ruta para actualizar solo el estado de un registro existente de Habitacion por ID
+router.put('/habitacionUpdateEstado/:id', (req, res) => {
     // Obtén el ID del registro a actualizar desde los parámetros de la URL
     const id = req.params.id;
-    // Recibe los datos actualizados desde el cuerpo de la solicitud (req.body)
-    const { N_de_habitacion, ID_tipoHabitacion, Num_Cama, ID_Estado, Precio } = req.body;
-    // Verifica si se proporcionaron los datos necesarios
-    if (!N_de_habitacion || !ID_tipoHabitacion || !Num_Cama || !ID_Estado || !Precio) {
-        return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+
+    // Recibe el nuevo ID de estado desde el cuerpo de la solicitud (req.body)
+    const { ID_Estado } = req.body;
+
+    // Verifica si se proporcionó el ID de estado
+    if (!ID_Estado) {
+        return res.status(400).json({ error: 'El campo ID_Estado es obligatorio' });
     }
+
+    // Realiza la consulta SQL para actualizar el estado del registro de Habitacion por ID
+    const sql = `
+        UPDATE Habitacion
+        SET ID_Estado = ?
+        WHERE ID_Habitacion = ?
+    `;
+    const values = [ID_Estado, id];
+
+    // Ejecuta la consulta
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error al actualizar el estado del registro de Habitacion:', err);
+            res.status(500).json({ error: 'Error al actualizar el estado del registro de Habitacion' });
+        } else {
+            // Devuelve un mensaje de éxito
+            res.status(200).json({ message: 'Estado de Habitacion actualizado con éxito' });
+        }
+    });
+});
+
+
+
+
+
+
+// Ruta para actualizar un registro existente de Habitacion por ID
+router.put('/habitacionUpdate/:id', (req, res) => {
+    // Obtén el ID del registro a actualizar desde los parámetros de la URL
+    const id = req.params.id;
+    
+    // Recibe los datos actualizados desde el cuerpo de la solicitud (req.body)
+    const { N_de_habitacion, ID_tipoHabitacion, Num_Cama,  Precio, Imagenes } = req.body;
+    
+    // Verifica si se proporcionaron los datos necesarios
+    if (!N_de_habitacion || !ID_tipoHabitacion || !Num_Cama ||  !Precio) {
+        return res.status(400).json({ error: 'Todos los campos obligatorios deben estar presentes' });
+    }
+    
     // Realiza la consulta SQL para actualizar el registro de Habitacion por ID
     const sql = `
-    UPDATE Habitacion
-    SET N_de_habitacion = ?, ID_tipoHabitacion = ?, Num_Cama = ?, ID_Estado = ?, Precio = ?
-    WHERE ID_Habitacion = ?
-`;
-    const values = [N_de_habitacion, ID_tipoHabitacion, Num_Cama, ID_Estado, Precio, id];
+        UPDATE Habitacion
+        SET N_de_habitacion = ?, ID_tipoHabitacion = ?, Num_Cama = ?,  Precio = ?, Imagenes = ?
+        WHERE ID_Habitacion = ?
+    `;
+    const values = [N_de_habitacion, ID_tipoHabitacion, Num_Cama,  Precio, Imagenes, id];
+    
     // Ejecuta la consulta
     db.query(sql, values, (err, result) => {
         if (err) {
@@ -489,44 +534,37 @@ module.exports = (db) => {
             res.status(200).json({ message: 'Registro de Habitacion actualizado con éxito' });
         }
     });
-});    
+});
+ 
 
 
-    router.get('/ListarHabitaciones', (req, res) => {
-        const sql = `
-  SELECT
-    Habitacion.ID_Habitacion,
-    Habitacion.N_de_habitacion,
-    Tipo_de_habitacion.Nombre AS Tipo_Habitacion,
-    Habitacion.Num_Cama,
-    Estado.NombreEstado AS Estado_Habitacion,
-    Habitacion.Precio,
-    HEX(Habitacion.Imagenes) AS Imagen
-  FROM
-    Habitacion
-  INNER JOIN
-    Tipo_de_habitacion ON Habitacion.ID_tipoHabitacion = Tipo_de_habitacion.ID_tipoHabitacion
-  INNER JOIN
-    Estado ON Habitacion.ID_Estado = Estado.ID_Estado
-`;
+router.get('/ListarHabitaciones', (req, res) => {
+    const sql = `
+        SELECT
+            Habitacion.ID_Habitacion,
+            Habitacion.N_de_habitacion,
+            Tipo_de_habitacion.Nombre AS Tipo_Habitacion,
+            Habitacion.Num_Cama,
+            Estado.NombreEstado AS Estado_Habitacion,
+            Habitacion.Precio,
+            Habitacion.Imagenes
+        FROM
+            Habitacion
+        INNER JOIN
+            Tipo_de_habitacion ON Habitacion.ID_tipoHabitacion = Tipo_de_habitacion.ID_tipoHabitacion
+        INNER JOIN
+            Estado ON Habitacion.ID_Estado = Estado.ID_Estado
+    `;
 
-        db.query(sql, (err, result) => {
-            if (err) {
-                console.error('Error al recuperar registros de Habitacion:', err);
-                res.status(500).json({ error: 'Error al recuperar registros de Habitacion' });
-            } else {
-                // Convierte la imagen de hexadecimal a base64
-                result.forEach(row => {
-                    if (row.Imagen) {
-                        row.Imagen = Buffer.from(row.Imagen, 'hex').toString('base64');
-                    } else {
-                        row.Imagen = null; // Puedes asignar un valor predeterminado si la imagen está ausente
-                    }
-                });
-                res.status(200).json(result);
-            }
-        });
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error al recuperar registros de Habitacion:', err);
+            res.status(500).json({ error: 'Error al recuperar registros de Habitacion' });
+        } else {
+            res.status(200).json(result);
+        }
     });
+});
 
 
 

@@ -53,7 +53,7 @@ CREATE TABLE Habitacion (
   Num_Cama INT,
   ID_Estado INT,
   Precio INT,
-  Imagenes BLOB,
+  Imagenes LONGTEXT,
   FOREIGN KEY (ID_tipoHabitacion) REFERENCES Tipo_de_habitacion (ID_tipoHabitacion),
   FOREIGN KEY (ID_Estado) REFERENCES Estado (ID_Estado)
 );

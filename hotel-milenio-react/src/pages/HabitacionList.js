@@ -3,6 +3,7 @@ import { Table, Button, Card, Row, Col, Form, Modal, FloatingLabel } from 'react
 import Header from '../components/Header';
 
 function HabitacionList() {
+  
   const [habitaciones, setHabitaciones] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedHabitacion, setSelectedHabitacion] = useState({});
@@ -12,9 +13,21 @@ function HabitacionList() {
     Num_Cama: "",
     ID_Estado: "",
     Precio: "",
-    Imagen: null, // Para almacenar la imagen
+    Imagenes: "", // Para almacenar la imagen
   });
 
+  const [tipohabitaciones, setTipohabitaciones] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/crud/TipoHabitacionCombo')
+      .then(response => response.json())
+      .then(data => {
+        setTipohabitaciones(data);
+      })
+      .catch(error => {
+        console.error('Error al obtener las habitaciones', error);
+      });
+  }, []);
   // Función para abrir el modal y pasar los datos de la habitación seleccionada
   const openModal = (habitacion) => {
     setSelectedHabitacion(habitacion);
@@ -24,28 +37,36 @@ function HabitacionList() {
       N_de_habitacion: habitacion.N_de_habitacion,
       ID_tipoHabitacion: habitacion.ID_tipoHabitacion,
       Num_Cama: habitacion.Num_Cama,
-      ID_Estado: habitacion.ID_Estado,
       Precio: habitacion.Precio,
-      Imagen: null,
+      Imagenes: habitacion.Imagenes,
     });
     setShowModal(true);
   };
 
   const handleFormChange = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
-    if (name === 'Imagen') {
+  const handleImagenChange = (event) => {
+    const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+  
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64String = reader.result; // Obtener la imagen en formato base64
       setFormData({
         ...formData,
-        Imagen: files[0], // Guarda la imagen
+        Imagenes: base64String // Usa "Imagenes" en lugar de "imagen"
       });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
+    };
+    if (file) {
+      reader.readAsDataURL(file); // Lee el contenido del archivo como base64
     }
   };
+  
 
   const loadHabitaciones = () => {
     // Realiza una solicitud GET al servidor para obtener la lista de habitaciones
@@ -55,30 +76,25 @@ function HabitacionList() {
       .catch((error) => console.error('Error al obtener las habitaciones:', error));
   };
 
-  // Función para enviar el formulario de actualización
   const handleUpdate = () => {
-    const idHabitacion = selectedHabitacion.ID_Habitacion;
 
-    const formDataToUpdate = new FormData();
-    formDataToUpdate.append('N_de_habitacion', formData.N_de_habitacion);
-    formDataToUpdate.append('ID_tipoHabitacion', formData.ID_tipoHabitacion);
-    formDataToUpdate.append('Num_Cama', formData.Num_Cama);
-    formDataToUpdate.append('ID_Estado', formData.ID_Estado);
-    formDataToUpdate.append('Precio', formData.Precio);
-    formDataToUpdate.append('Imagen', formData.Imagen); // Agrega la imagen al formulario
-
-    // Realiza una solicitud PUT al servidor para actualizar el registro de la habitación
-    fetch(`http://localhost:5000/crud/habitacion/update/${idHabitacion}`, {
+    console.log('Datos a enviar para actualizar:', formData);
+    // Realiza la solicitud PUT al servidor para actualizar el registro
+    fetch(`http://localhost:5000/crud/habitacionUpdate/${selectedHabitacion.ID_Habitacion}`, {
       method: 'PUT',
-      body: formDataToUpdate,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
     })
       .then((response) => {
         if (response.ok) {
+          // La actualización fue exitosa, puedes cerrar el modal y refrescar la lista de empleado
           setShowModal(false);
-          loadHabitaciones();
+          loadHabitaciones(); // Cargar la lista de empleado actualizada
         }
       })
-      .catch((error) => console.error('Error al actualizar el registro de la habitación:', error));
+      .catch((error) => console.error('Error al actualizar el registro:', error));
   };
 
 
@@ -106,9 +122,12 @@ function HabitacionList() {
     }
   };
 
-  // Realiza una solicitud GET al servidor para obtener la lista de habitaciones al cargar el componente
+  // Realiza una solicitud GET al servidor para obtener los Empleado
   useEffect(() => {
-    loadHabitaciones();
+    fetch('http://localhost:5000/crud/ListarHabitaciones')
+      .then((response) => response.json())
+      .then((data) => setHabitaciones(data))
+      .catch((error) => console.error('Error al obtener los Empleado y personas:', error));
   }, []);
 
   return (
@@ -141,9 +160,8 @@ function HabitacionList() {
                   <td>{habitacion.Precio}</td>
                   <td>
                     <img
-                      src={`data:image/jpeg;base64, ${habitacion.Imagen}`}
-                      alt={`Imagen de la habitación ${habitacion.N_de_habitacion}`}
-                      className="img-habitacion"
+                      src={habitacion.Imagenes} alt={habitacion.Tipo_Habitacion} style={{ width: '150px' }}
+
                     />
                   </td>
                   <td>
@@ -179,17 +197,27 @@ function HabitacionList() {
                     </FloatingLabel>
                   </Col>
 
-                  <Col sm="6" md="6" lg="4">
-                    <FloatingLabel controlId="tipoHabitacion" label="ID Tipo de Habitación">
-                      <Form.Control
-                        type="text"
-                        placeholder="Ingrese el ID del tipo de habitación"
+                  <Col sm="12" md="6" lg="4">
+                    <FloatingLabel controlId="ID_tipoHabitacion" label="Tipo de habitación">
+                      <Form.Select
+                        aria-label="ID_tipoHabitacion"
                         name="ID_tipoHabitacion"
-                        value={formData.ID_tipoHabitacion}
+                        value={formData.ID_tipoHabitacion} // Asegúrate de que el valor esté configurado correctamente
                         onChange={handleFormChange}
-                      />
+                      >
+                        <option>Seleccione el TipoHabitacion</option>
+                        {tipohabitaciones.map((tipohabitacion) => (
+                          <option
+                            key={tipohabitacion.ID_tipoHabitacion}
+                            value={tipohabitacion.ID_tipoHabitacion}
+                          >
+                            {tipohabitacion.Nombre}
+                          </option>
+                        ))}
+                      </Form.Select>
                     </FloatingLabel>
                   </Col>
+
 
                   <Col sm="6" md="6" lg="4">
                     <FloatingLabel controlId="numeroCamas" label="Número de Camas">
@@ -203,17 +231,7 @@ function HabitacionList() {
                     </FloatingLabel>
                   </Col>
 
-                  <Col sm="6" md="6" lg="4">
-                    <FloatingLabel controlId="idEstado" label="ID Estado">
-                      <Form.Control
-                        type="text"
-                        placeholder="Ingrese el ID del estado"
-                        name="ID_Estado"
-                        value={formData.ID_Estado}
-                        onChange={handleFormChange}
-                      />
-                    </FloatingLabel>
-                  </Col>
+
 
                   <Col sm="6" md="6" lg="4">
                     <FloatingLabel controlId="precio" label="Precio">
@@ -227,16 +245,19 @@ function HabitacionList() {
                     </FloatingLabel>
                   </Col>
 
-                  <Col sm="6" md="6" lg="4">
-                    <FloatingLabel controlId="imagen" label="Imagen">
+                  <Col sm="12" md="12" lg="12">
+                    <Form.Group controlId="imagen" className="" >
                       <Form.Control
                         type="file"
-                        name="Imagen"
-                        accept=".jpg, .jpeg, .png" // Agrega las extensiones de archivo permitidas
-                        onChange={handleFormChange}
+                        accept=".jpg, .png, .jpeg"
+                        size="lg"
+                        name="imagen"
+                        onChange={handleImagenChange}
                       />
-                    </FloatingLabel>
+                    </Form.Group>
                   </Col>
+
+
                 </Row>
               </Form>
             </Card.Body>

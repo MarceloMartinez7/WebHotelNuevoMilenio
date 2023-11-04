@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Row, Col, Container, FloatingLabel, Card, Button } from 'react-bootstrap';
 import Header from '../components/Header';
 import '../styles/App.css';
@@ -15,12 +15,29 @@ function Habitacion() {
     const [Imagenes, setImagenes] = useState('');
 
     const [tipohabitaciones, setTipohabitaciones] = useState([]);
-    
-
-
 
     const [estados, setEstados] = useState([]);
-   
+
+
+
+
+    const handleImagenChange = (event) => {
+        const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64String = reader.result; // Obtener la imagen en formato base64
+            setImagenes(base64String); // Guardado imagen en variable de estado
+        };
+        if (file) {
+            reader.readAsDataURL(file); // Lee el contenido del archivo como base64
+        }
+    };
+
+
+
+
+
 
     useEffect(() => {
         fetch('http://localhost:5000/crud/TipoHabitacionCombo')
@@ -80,9 +97,9 @@ function Habitacion() {
                 setNum_Cama('');
                 setID_Estado('');
                 setPrecio('');
-                setImagenes('');
+
             } else {
-                alert('Error al registrar el cliente');
+                alert('Error al registrar la habitacion');
             }
         } catch (error) {
             console.error('Error en la solicitud:', error);
@@ -123,7 +140,7 @@ function Habitacion() {
                                     </FloatingLabel>
                                 </Col>
 
-                                
+
                                 <Col sm="12" md="6" lg="4">
                                     <FloatingLabel controlId="ID_tipoHabitacion" label="Tipo de habitacion">
                                         <Form.Select
@@ -187,16 +204,21 @@ function Habitacion() {
                                     </FloatingLabel>
                                 </Col>
 
-                                <Col sm="12" md="12" lg="12">
-                                    <FloatingLabel controlId="Imagenes" label="Imagenes">
+
+
+                                <Col sm="12" md="6" lg="6">
+                                    <Form.Group controlId="imagen" className="" >
                                         <Form.Control
-                                            type="text"
-                                            placeholder="Ingrese la Imagenes"
-                                            value={Imagenes}
-                                            onChange={(e) => setImagenes(e.target.value)}
+                                            type="file"
+                                            accept=".jpg, .png, .jpeg"
+                                            size="lg"
+                                            onChange={handleImagenChange}
                                         />
-                                    </FloatingLabel>
+                                    </Form.Group>
                                 </Col>
+
+
+
 
                             </Row>
                             <div className="center-button">
