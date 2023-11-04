@@ -464,43 +464,48 @@ module.exports = (db) => {
 
 
 
-
-// Ruta para actualizar solo el estado de un registro existente de Habitacion por ID
-router.put('/habitacionUpdateEstado/:id', (req, res) => {
-    // Obtén el ID del registro a actualizar desde los parámetros de la URL
-    const id = req.params.id;
-
-    // Recibe el nuevo ID de estado desde el cuerpo de la solicitud (req.body)
-    const { ID_Estado } = req.body;
-
-    // Verifica si se proporcionó el ID de estado
-    if (!ID_Estado) {
-        return res.status(400).json({ error: 'El campo ID_Estado es obligatorio' });
-    }
-
-    // Realiza la consulta SQL para actualizar el estado del registro de Habitacion por ID
-    const sql = `
-        UPDATE Habitacion
-        SET ID_Estado = ?
-        WHERE ID_Habitacion = ?
-    `;
-    const values = [ID_Estado, id];
-
-    // Ejecuta la consulta
-    db.query(sql, values, (err, result) => {
-        if (err) {
-            console.error('Error al actualizar el estado del registro de Habitacion:', err);
-            res.status(500).json({ error: 'Error al actualizar el estado del registro de Habitacion' });
-        } else {
-            // Devuelve un mensaje de éxito
-            res.status(200).json({ message: 'Estado de Habitacion actualizado con éxito' });
-        }
+    router.put('/habitacionChangeStateDisponible/:id', (req, res) => {
+        const id = req.params.id;
+    
+        const sql = `
+            UPDATE Habitacion
+            SET ID_Estado = 1
+            WHERE ID_Habitacion = ?
+        `;
+        const values = [id];
+    
+        db.query(sql, values, (err, result) => {
+            if (err) {
+                console.error('Error al cambiar el estado de la habitación a Disponible:', err);
+                res.status(500).json({ error: 'Error al cambiar el estado de la habitación a Disponible' });
+            } else {
+                res.status(200).json({ message: 'Estado de la habitación cambiado a Disponible con éxito' });
+            }
+        });
     });
-});
+    
 
 
-
-
+    router.put('/habitacionChangeStateSucio/:id', (req, res) => {
+        const id = req.params.id;
+    
+        const sql = `
+            UPDATE Habitacion
+            SET ID_Estado = 3
+            WHERE ID_Habitacion = ?
+        `;
+        const values = [id];
+    
+        db.query(sql, values, (err, result) => {
+            if (err) {
+                console.error('Error al cambiar el estado de la habitación a Sucio:', err);
+                res.status(500).json({ error: 'Error al cambiar el estado de la habitación a Sucio' });
+            } else {
+                res.status(200).json({ message: 'Estado de la habitación cambiado a Sucio con éxito' });
+            }
+        });
+    });
+    
 
 
 // Ruta para actualizar un registro existente de Habitacion por ID

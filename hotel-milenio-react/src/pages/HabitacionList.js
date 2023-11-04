@@ -3,7 +3,6 @@ import { Table, Button, Card, Row, Col, Form, Modal, FloatingLabel } from 'react
 import Header from '../components/Header';
 
 function HabitacionList() {
-  
   const [habitaciones, setHabitaciones] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedHabitacion, setSelectedHabitacion] = useState({});
@@ -28,6 +27,7 @@ function HabitacionList() {
         console.error('Error al obtener las habitaciones', error);
       });
   }, []);
+
   // Función para abrir el modal y pasar los datos de la habitación seleccionada
   const openModal = (habitacion) => {
     setSelectedHabitacion(habitacion);
@@ -53,20 +53,19 @@ function HabitacionList() {
 
   const handleImagenChange = (event) => {
     const file = event.target.files[0]; // Obtener el primer archivo seleccionado
-  
+
     const reader = new FileReader();
     reader.onload = () => {
       const base64String = reader.result; // Obtener la imagen en formato base64
       setFormData({
         ...formData,
-        Imagenes: base64String // Usa "Imagenes" en lugar de "imagen"
+        Imagenes: base64String, // Usa "Imagenes" en lugar de "imagen"
       });
     };
     if (file) {
       reader.readAsDataURL(file); // Lee el contenido del archivo como base64
     }
   };
-  
 
   const loadHabitaciones = () => {
     // Realiza una solicitud GET al servidor para obtener la lista de habitaciones
@@ -77,7 +76,6 @@ function HabitacionList() {
   };
 
   const handleUpdate = () => {
-
     console.log('Datos a enviar para actualizar:', formData);
     // Realiza la solicitud PUT al servidor para actualizar el registro
     fetch(`http://localhost:5000/crud/habitacionUpdate/${selectedHabitacion.ID_Habitacion}`, {
@@ -96,6 +94,54 @@ function HabitacionList() {
       })
       .catch((error) => console.error('Error al actualizar el registro:', error));
   };
+
+  // Función para cambiar el estado de una habitación a "Disponible" (ID_Estado: 1)
+  const changeHabitacionStateDisponible = (idHabitacion) => {
+    console.log(`Cambiando el estado de la habitación ${idHabitacion} a Disponible`);
+  
+    // Realiza una solicitud PUT al servidor para cambiar el estado de la habitación a Disponible
+    fetch(`http://localhost:5000/crud/habitacionChangeStateDisponible/${idHabitacion}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ID_Estado: 1 }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log(`La habitación ${idHabitacion} se cambió con éxito a Disponible`);
+          loadHabitaciones(); // Cargar la lista de habitaciones actualizada
+        } else {
+          console.error(`Error al cambiar el estado de la habitación ${idHabitacion} a Disponible`);
+        }
+      })
+      .catch((error) => console.error('Error al cambiar el estado de la habitación:', error));
+  };
+
+  // Función para cambiar el estado de una habitación a "Sucio" (ID_Estado: 3)
+  const changeHabitacionStateSucio = (idHabitacion) => {
+    console.log(`Cambiando el estado de la habitación ${idHabitacion} a Sucio`);
+  
+    // Realiza una solicitud PUT al servidor para cambiar el estado de la habitación a Sucio
+    fetch(`http://localhost:5000/crud/habitacionChangeStateSucio/${idHabitacion}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ID_Estado: 3 }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log(`La habitación ${idHabitacion} se cambió con éxito a Sucio`);
+          loadHabitaciones(); // Cargar la lista de habitaciones actualizada
+        } else {
+          console.error(`Error al cambiar el estado de la habitación ${idHabitacion} a Sucio`);
+        }
+      })
+      .catch((error) => console.error('Error al cambiar el estado de la habitación:', error));
+  };
+
+// ...
 
 
   // Función para manejar la eliminación de una habitación
@@ -122,12 +168,9 @@ function HabitacionList() {
     }
   };
 
-  // Realiza una solicitud GET al servidor para obtener los Empleado
+  // Realiza una solicitud GET al servidor para obtener las habitaciones
   useEffect(() => {
-    fetch('http://localhost:5000/crud/ListarHabitaciones')
-      .then((response) => response.json())
-      .then((data) => setHabitaciones(data))
-      .catch((error) => console.error('Error al obtener los Empleado y personas:', error));
+    loadHabitaciones();
   }, []);
 
   return (
@@ -147,6 +190,7 @@ function HabitacionList() {
                 <th>ID Estado</th>
                 <th>Precio</th>
                 <th>Imagen</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -159,14 +203,21 @@ function HabitacionList() {
                   <td>{habitacion.Estado_Habitacion}</td>
                   <td>{habitacion.Precio}</td>
                   <td>
-                    <img
-                      src={habitacion.Imagenes} alt={habitacion.Tipo_Habitacion} style={{ width: '150px' }}
-
-                    />
+                    <img src={habitacion.Imagenes} alt={habitacion.Tipo_Habitacion} style={{ width: '150px' }} />
                   </td>
                   <td>
-                    <Button variant="primary" onClick={() => openModal(habitacion)}>Actualizar</Button>
-                    <Button variant="danger" onClick={() => handleDelete(habitacion.ID_Habitacion)}>Eliminar</Button>
+                    <Button variant="primary" onClick={() => openModal(habitacion)}>
+                      Actualizar
+                    </Button>
+                    <Button variant="danger" onClick={() => handleDelete(habitacion.ID_Habitacion)}>
+                      Eliminar
+                    </Button>
+                    <Button variant="warning" onClick={() => changeHabitacionStateSucio(habitacion.ID_Habitacion, 3)}>
+                      Cambiar a Sucio
+                    </Button>
+                    <Button variant="success" onClick={() => changeHabitacionStateDisponible(habitacion.ID_Habitacion, 1)}>
+                      Cambiar a Disponible
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -202,7 +253,7 @@ function HabitacionList() {
                       <Form.Select
                         aria-label="ID_tipoHabitacion"
                         name="ID_tipoHabitacion"
-                        value={formData.ID_tipoHabitacion} // Asegúrate de que el valor esté configurado correctamente
+                        value={formData.ID_tipoHabitacion}
                         onChange={handleFormChange}
                       >
                         <option>Seleccione el TipoHabitacion</option>
@@ -218,7 +269,6 @@ function HabitacionList() {
                     </FloatingLabel>
                   </Col>
 
-
                   <Col sm="6" md="6" lg="4">
                     <FloatingLabel controlId="numeroCamas" label="Número de Camas">
                       <Form.Control
@@ -230,8 +280,6 @@ function HabitacionList() {
                       />
                     </FloatingLabel>
                   </Col>
-
-
 
                   <Col sm="6" md="6" lg="4">
                     <FloatingLabel controlId="precio" label="Precio">
@@ -246,7 +294,7 @@ function HabitacionList() {
                   </Col>
 
                   <Col sm="12" md="12" lg="12">
-                    <Form.Group controlId="imagen" className="" >
+                    <Form.Group controlId="imagen" className="">
                       <Form.Control
                         type="file"
                         accept=".jpg, .png, .jpeg"
@@ -256,8 +304,6 @@ function HabitacionList() {
                       />
                     </Form.Group>
                   </Col>
-
-
                 </Row>
               </Form>
             </Card.Body>
