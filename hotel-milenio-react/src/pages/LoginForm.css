@@ -1,20 +1,32 @@
 .login-container {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.centered-content {
     text-align: center;
 }
 
+.form-container {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    margin-top: 0; /* Elimina el margen superior del título */
+}
+
 .input-container {
-    margin-bottom: 15px; /* Agrega espacio entre títulos y campos */
+    margin-bottom: 15px;
 }
 
 label {
-    margin-bottom: 5px; /* Ajusta el margen inferior de los títulos */
+    margin-bottom: 5px;
 }
 
 .login-button {
@@ -32,3 +44,9 @@ label {
 .login-button:hover {
     background-color: #0056b3;
 }
+
+
+
+
+
+
