@@ -25,7 +25,7 @@ function ReservacionEstancia() {
     const [habitacionesSeleccionadas, setHabitacionesSeleccionadas] = useState([]);
     const [duracionEstancia, setDuracionEstancia] = useState(0);
 
-    
+
 
     useEffect(() => {
         fetch('http://localhost:5000/crud/ComboHabitacion')
@@ -122,7 +122,7 @@ function ReservacionEstancia() {
         ID_Empleado: Empleado,
         TipoServicio: formData.TipoServicio,
         habitaciones: habitacionesSeleccionadas.map((habitacion) => habitacion.ID_Habitacion),
-        
+
     };
 
     function formatDate(dateString) {
@@ -133,38 +133,38 @@ function ReservacionEstancia() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log('handleSubmit iniciado');
-    console.log('formData:', formData);
-    console.log('reservaData:', reservaData);
-try{
-    const response = await fetch('http://localhost:5000/crud/reservacionCreate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(reservaData),
-        });
-           
-            
-                if (response.ok) {
-                    alert('Registro exitoso');
-                } else {
-                    alert('No se pudo guardar la reserva. Por favor, inténtelo nuevamente.');
-                }
-            
-            } catch(error)  {
-                console.error('Error al guardar la reserva', error);
-                alert('Hubo un error al enviar la solicitud.');
-            };
+        console.log('formData:', formData);
+        console.log('reservaData:', reservaData);
+        try {
+            const response = await fetch('http://localhost:5000/crud/reservacionCreate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(reservaData),
+            });
+
+
+            if (response.ok) {
+                alert('Registro exitoso');
+            } else {
+                alert('No se pudo guardar la reserva. Por favor, inténtelo nuevamente.');
+            }
+
+        } catch (error) {
+            console.error('Error al guardar la reserva', error);
+            alert('Hubo un error al enviar la solicitud.');
+        };
     };
-    
+
     return (
         <div>
             <Header />
             <Container>
-                <Card className="mt-3">
+                <Card className="mt-30">
                     <Card.Body>
                         <Card.Title>Registro de Reservación de Estancia</Card.Title>
-                        <Form className="mt-3" onSubmit={handleSubmit}>
+                        <Form className="mt-30" onSubmit={handleSubmit}>
                             <Row className="g-3">
 
 
@@ -179,7 +179,11 @@ try{
                                             }
                                             disabled
                                         />
-                                        <Button variant="primary" onClick={() => setShowClientListModal(true)}>
+                                        <Button
+                                            variant="primary"
+                                            className="custom-client-button" // Agrega una clase personalizada al botón
+                                            onClick={() => setShowClientListModal(true)}
+                                        >
                                             Seleccionar Cliente
                                         </Button>
                                     </FloatingLabel>
@@ -197,7 +201,7 @@ try{
                                     </FloatingLabel>
                                 </Col>
 
-                                
+
                                 <Col sm="6" md="6" lg="6">
                                     <FloatingLabel controlId="fechaSalida" label="Fecha de Salida">
                                         <Form.Control
@@ -243,7 +247,7 @@ try{
                                         <label htmlFor="reserva">Reserva</label>
                                     </div>
 
-                                    
+
                                     <div>
                                         <input
                                             type="radio"
@@ -309,7 +313,7 @@ try{
                 </Card>
             </Container>
 
-            <Modal show={showClientListModal} onHide={() => setShowClientListModal(false)} size="lg">
+            <Modal show={showClientListModal} onHide={() => setShowClientListModal(false)} size="xl">
                 <Modal.Header closeButton>
                     <Modal.Title>Seleccionar Cliente</Modal.Title>
                 </Modal.Header>
@@ -319,7 +323,7 @@ try{
             </Modal>
 
             <Container>
-                <h2>Habitaciones Seleccionadas:</h2>
+                <h2 className='NameHabitacionesTabla'>Habitaciones Seleccionadas:</h2>
                 <table className="table">
                     <thead>
                         <tr>

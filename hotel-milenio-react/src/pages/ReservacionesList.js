@@ -216,7 +216,7 @@ function ReservacionesList({ handleReservacionSelect }) {
                   </td>
                   <td>
                     <Button variant="warning" onClick={() => handleCancelarReserva(reservacion.ID_ReservaEstancia)}>
-                      Cancelar Reservación <FaBan /> {/* Agregamos el ícono de cancelar */}
+                      Cancelar Reservación <FaBan /> 
                     </Button>
                   </td>
                 </tr>

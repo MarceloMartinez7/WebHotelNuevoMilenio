@@ -978,8 +978,7 @@ router.post('/login', (req, res) => {
 
     //-----------------------------------------------------------
 
-
-
+   
 
     // Otras rutas CRUD
     return router;

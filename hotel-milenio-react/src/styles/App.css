@@ -17,7 +17,7 @@
   color: #ffffff; 
   transition: none;
   &:hover {
-      background-color: #23a8c9; 
+      background-color: rgb(224, 178, 41); 
       color: #ffffff; 
   }
   
@@ -30,4 +30,19 @@
   max-height: 150px;
 }
 
+.custom-client-button {
+  width: 100%; /* Establece el ancho del botón al 100% del contenedor */
+}
 
+.NameHabitacionesTabla{
+background-color: #ffffff;
+border-radius: 0px 0px 10px 10px;
+margin-top: 0px;
+font-family: 'Times New Roman', Times, serif;
+}
+
+.mt-30{
+ border-radius: 10px  10px 0px 0px;
+ margin-top: 50px;
+ font-family: Georgia, 'Times New Roman', Times, serif;
+}

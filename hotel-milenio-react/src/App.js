@@ -18,6 +18,8 @@ import ServicioList from './pages/ServiciosList';
 // Agregar una nueva importación para el componente de inicio de sesión
 import Login from './pages/login';
 
+import Estadisticas from './pages/Estadisticas';
+
 function App() {
   return (
     <Router>
@@ -39,6 +41,7 @@ function App() {
 
         <Route path="/servicios" element={<Servicio />} />
         <Route path="/listarservicios" element={<ServicioList />} />
+        <Route path="/Reportes" element={<Estadisticas />} />
       </Routes>
     </Router>
   );
