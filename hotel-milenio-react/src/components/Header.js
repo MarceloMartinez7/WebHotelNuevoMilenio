@@ -31,7 +31,7 @@ function Header() {
               </Nav.Link>
 
               <Nav.Link>
-                <Link to="/about" className="link-unstyled">Informacion</Link>
+                <Link to="/about" className="link-unstyled">Información</Link>
               </Nav.Link>
 
               <NavDropdown title="Clientes" id="clientes">
@@ -56,24 +56,24 @@ function Header() {
               </NavDropdown>
 
 
-              <NavDropdown title="ReservacionEstancia" id="ReservacionEstancia">
+              <NavDropdown title="ReservaciónEstancia" id="ReservaciónEstancia">
                 <NavDropdown.Item>
-                  <Link to="/ReservacionEstancia" className="link-unstyled">Registrar ReservacionEstancia</Link>
+                  <Link to="/ReservacionEstancia" className="link-unstyled">Registrar ReservaciónEstancia</Link>
                 </NavDropdown.Item>
 
                 <NavDropdown.Item>
-                  <Link to="/ListadoReservacionEstancia" className="link-unstyled">Listar ReservacionEstancia</Link>
+                  <Link to="/ListadoReservacionEstancia" className="link-unstyled">Listar ReservaciónEstancia</Link>
                 </NavDropdown.Item>
               </NavDropdown>
 
 
-              <NavDropdown title="Habitacion" id="Habitacion">
+              <NavDropdown title="Habitación" id="Habitación">
               <NavDropdown.Item>
-                  <Link to="/Habitacion" className="link-unstyled">Registrar Habitacion</Link>
+                  <Link to="/Habitacion" className="link-unstyled">Registrar Habitación</Link>
                 </NavDropdown.Item>
 
                 <NavDropdown.Item>
-                  <Link to="/ListarHabitacion" className="link-unstyled">Listar Habitacion</Link>
+                  <Link to="/ListarHabitacion" className="link-unstyled">Listar Habitación</Link>
                 </NavDropdown.Item>
               </NavDropdown>
 
@@ -145,21 +145,21 @@ function Header() {
               </NavDropdown.Item>
             </NavDropdown>
             
-            <NavDropdown title="ReservacionEstancia" id="ReservacionEstancia">
+            <NavDropdown title="ReservaciónEstancia" id="ReservaciónEstancia">
                 <NavDropdown.Item>
-                  <Link to="/ReservacionEstancia" className="link-unstyled">Registrar ReservacionEstancia</Link>
+                  <Link to="/ReservacionEstancia" className="link-unstyled">Registrar ReservaciónEstancia</Link>
                 </NavDropdown.Item>
 
                 <NavDropdown.Item>
-                  <Link to="/ListadoReservacionEstancia" className="link-unstyled">Listar ReservacionEstancia</Link>
+                  <Link to="/ListadoReservacionEstancia" className="link-unstyled">Listar ReservaciónEstancia</Link>
                 </NavDropdown.Item>
               </NavDropdown>
 
-            <NavDropdown title="Habitacion" id="Habitacion">
+            <NavDropdown title="Habitación" id="Habitación">
               
 
               <NavDropdown.Item>
-                <Link to="/ListarHabitacion" className="link-unstyled">Listar Habitacion</Link>
+                <Link to="/ListarHabitacion" className="link-unstyled">Listar Habitación</Link>
               </NavDropdown.Item>
             </NavDropdown>
             
