@@ -1,0 +1,17 @@
+.button-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .update-button {
+    background-color: #007bff; /* Color azul para el botón de actualizar */
+    color: #fff;
+    margin: 0 -70px 0 0; /* Margen en la parte derecha del botón */
+
+  }
+  
+  .delete-button {
+    background-color: #dc3545; /* Color rojo para el botón de eliminar */
+    color: #fff;
+  }
+  
