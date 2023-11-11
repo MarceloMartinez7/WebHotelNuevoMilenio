@@ -184,6 +184,7 @@ function EmpleadoList() {
                 <th>Telefono</th>
                 <th>Usuario</th>
                 <th>Contraseña</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>

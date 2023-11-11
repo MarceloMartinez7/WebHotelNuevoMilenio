@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Card, Row, Col, Form, Modal, FloatingLabel } from 'react-bootstrap';
 import Header from '../components/Header';
+import './habitacion-list.css'
 
 function HabitacionList() {
   const [habitaciones, setHabitaciones] = useState([]);
@@ -206,19 +207,21 @@ function HabitacionList() {
                     <img src={habitacion.Imagenes} alt={habitacion.Tipo_Habitacion} style={{ width: '150px' }} />
                   </td>
                   <td>
-                    <Button variant="primary" onClick={() => openModal(habitacion)}>
-                      Actualizar
-                    </Button>
-                    <Button variant="danger" onClick={() => handleDelete(habitacion.ID_Habitacion)}>
-                      Eliminar
-                    </Button>
-                    <Button variant="warning" onClick={() => changeHabitacionStateSucio(habitacion.ID_Habitacion, 3)}>
-                      Cambiar a Sucio
-                    </Button>
-                    <Button variant="success" onClick={() => changeHabitacionStateDisponible(habitacion.ID_Habitacion, 1)}>
-                      Cambiar a Disponible
-                    </Button>
-                  </td>
+  <div className="button-container">
+    <Button className="update-button" onClick={() => openModal(habitacion)}>
+      Actualizar
+    </Button>
+    <Button className="delete-button" onClick={() => handleDelete(habitacion.ID_Habitacion)}>
+      Eliminar
+    </Button>
+    <Button className="change-sucio-button" onClick={() => changeHabitacionStateSucio(habitacion.ID_Habitacion, 3)}>
+      Cambiar a Sucio
+    </Button>
+    <Button className="change-disponible-button" onClick={() => changeHabitacionStateDisponible(habitacion.ID_Habitacion, 1)}>
+      Cambiar a Disponible
+    </Button>
+  </div>
+</td>
                 </tr>
               ))}
             </tbody>

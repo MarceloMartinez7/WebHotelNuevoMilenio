@@ -1,0 +1,26 @@
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px; 
+  }
+  
+  .update-button {
+    background-color: #007bff; /* Color azul para el botón de actualizar */
+    color: #fff;
+  }
+  
+  .delete-button {
+    background-color: #dc3545; /* Color rojo para el botón de eliminar */
+    color: #fff;
+  }
+  
+  .change-sucio-button {
+    background-color: #ffc107; /* Color amarillo para el botón de cambiar a Sucio */
+    color: #000;
+    margin-right: 5px;
+  }
+  
+  .change-disponible-button {
+    background-color: #28a745; /* Color verde para el botón de cambiar a Disponible */
+    color: #fff;
+  }

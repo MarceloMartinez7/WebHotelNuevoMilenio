@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Card, Row, Col, Form, Modal, FloatingLabel } from 'react-bootstrap';
 import Header from '../components/Header';
 import { FaTrashCan, FaPencil } from 'react-icons/fa6';
+import './servicios-list.css';
 
 
 function ServicioList() {
@@ -155,10 +156,6 @@ function ServicioList() {
               </FloatingLabel>
             </Col>
           </Row>
-
-
-
-
           <Table striped bordered hover>
             <thead>
               <tr>
@@ -166,7 +163,7 @@ function ServicioList() {
                 <th>Nombre Empleado</th>
                 <th>Nombre de Servicio</th>
                 <th>Descripcion del Servicio</th>
-               
+                <th>Acciones</th>
 
               </tr>
             </thead>
@@ -178,8 +175,14 @@ function ServicioList() {
                   <td>{servicio.NombreServicio}</td>
                   <td>{servicio.DescripcionServicio}</td>
                   <td>
-                    <Button variant="primary" onClick={() => openModal(servicio)}>Actualizar <FaPencil /></Button>
-                    <Button variant="danger" onClick={() => handleDelete(servicio.ID_Servicios)}>Eliminar <FaTrashCan /></Button>
+                    <div className="button-container">
+                      <Button className="update-button" onClick={() => openModal(servicio)}>
+                        Actualizar
+                      </Button>
+                      <Button className="delete-button" onClick={() => handleDelete(servicio.ID_Servicios)}>
+                        Eliminar
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}
