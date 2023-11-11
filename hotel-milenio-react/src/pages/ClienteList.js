@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Card, Row, Col, Form, Modal, FloatingLabel } from 'react-bootstrap';
 import { FaTrashCan, FaPencil } from 'react-icons/fa6';
 import Header from '../components/Header';
+import './cliente-list.css';
 
 function ClienteList({ handleClienteSelect }) {
     const [clientes, setClientes] = useState([]);
@@ -128,163 +129,164 @@ const handleSelectCliente = (idCliente, nombre, apellido) => {
   }, []);
 
   return (
-    <div>
-      <Header />
-      <Card className="m-3">
-        <Card.Body>
-          <Card.Title className="mb-3">Listado de Clientes</Card.Title>
-          <Row className="mb-3">
-            <Col sm="6" md="6" lg="4">
-              <FloatingLabel controlId="search" label="Buscar">
-                <Form.Control
-                  type="text"
-                  placeholder="Buscar"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
-              </FloatingLabel>
-            </Col>
-          </Row>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Cedula</th>
-                <th>Nombre1</th>
-                <th>Nombre2</th>
-                <th>Apellido1</th>
-                <th>Apellido2</th>
-                <th>Telefono</th>
-                <th>Procedencia</th>
-                <th>Seleccionar</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredClientes.map((cliente) => (
-                <tr key={cliente.ID_cliente}>
-                  <td>{cliente.ID_cliente}</td>
-                  <td>{cliente.Cedula}</td>
-                  <td>{cliente.Nombre1}</td>
-                  <td>{cliente.Nombre2}</td>
-                  <td>{cliente.Apellido1}</td>
-                  <td>{cliente.Apellido2}</td>
-                  <td>{cliente.Telefono}</td>
-                  <td>{cliente.Procedencia}</td>
-                  <td>
-                    <Button variant="primary" onClick={() => openModal(cliente)}>Actualizar<FaPencil /></Button>
-                    <Button variant="danger" onClick={() => handleDelete(cliente.ID_cliente, cliente.ID_Persona)}>Eliminar <FaTrashCan /></Button>
-                    {/* Llamamos a la nueva función para seleccionar el cliente */}
-                    <Button variant="success" onClick={() => handleSelectCliente(cliente.ID_cliente, cliente.Nombre1, cliente.Apellido1)}>Seleccionar</Button>
-                  </td>
+      <div>
+        <Header />
+        <Card className="m-3">
+          <Card.Body>
+            <Card.Title className="mb-3">Listado de Clientes</Card.Title>
+            <Row className="mb-3">
+              <Col sm="6" md="6" lg="4">
+                <FloatingLabel controlId="search" label="Buscar">
+                  <Form.Control
+                    type="text"
+                    placeholder="Buscar"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                  />
+                </FloatingLabel>
+              </Col>
+            </Row>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cedula</th>
+                  <th>Nombre1</th>
+                  <th>Nombre2</th>
+                  <th>Apellido1</th>
+                  <th>Apellido2</th>
+                  <th>Telefono</th>
+                  <th>Procedencia</th>
+                  <th>Seleccionar</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Card.Body>
-      </Card>
-      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Actualizar Cliente</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Card className="mt-3">
-            <Card.Body>
-              <Card.Title>Registro de Cliente</Card.Title>
-              <Form className="mt-3">
-                <Row className="g-3">
-                  <Col sm="6" md="6" lg="4">
-                    <FloatingLabel controlId="cedula" label="Cedula">
-                      <Form.Control
-                        type="text"
-                        placeholder="Ingrese la Cedula"
-                        name="Cedula"
-                        value={formData.Cedula}
-                        onChange={handleFormChange}
-                      />
-                    </FloatingLabel>
-                  </Col>
-                  <Col sm="6" md="6" lg="4">
-                    <FloatingLabel controlId="nombre1" label="Primer Nombre">
-                      <Form.Control
-                        type="text"
-                        placeholder="Ingrese el primer nombre"
-                        name="Nombre1"
-                        value={formData.Nombre1}
-                        onChange={handleFormChange}
-                      />
-                    </FloatingLabel>
-                  </Col>
-                  <Col sm="6" md="6" lg="4">
-                    <FloatingLabel controlId="nombre2" label="Segundo Nombre">
-                      <Form.Control
-                        type="text"
-                        placeholder="Ingrese el segundo nombre"
-                        name="Nombre2"
-                        value={formData.Nombre2}
-                        onChange={handleFormChange}
-                      />
-                    </FloatingLabel>
-                  </Col>
-                  <Col sm="6" md="6" lg="4">
-                    <FloatingLabel controlId="apellido1" label="Primer apellido">
-                      <Form.Control
-                        type="text"
-                        placeholder="Ingrese el primer apellido"
-                        name="Apellido1"
-                        value={formData.Apellido1}
-                        onChange={handleFormChange}
-                      />
-                    </FloatingLabel>
-                  </Col>
-                  <Col sm="6" md="6" lg="4">
-                    <FloatingLabel controlId="apellido2" label="Segundo apellido">
-                      <Form.Control
-                        type="text"
-                        placeholder="Ingrese el segundo apellido"
-                        name="Apellido2"
-                        value={formData.Apellido2}
-                        onChange={handleFormChange}
-                      />
-                    </FloatingLabel>
-                  </Col>
-                  <Col sm="12" md="6" lg="4">
-                    <FloatingLabel controlId="telefono" label="Teléfono">
-                      <Form.Control
-                        type="number"
-                        placeholder="Ingrese el teléfono"
-                        name="Telefono"
-                        value={formData.Telefono}
-                        onChange={handleFormChange}
-                      />
-                    </FloatingLabel>
-                  </Col>
-                  <Col sm="12" md="6" lg="4">
-                    <FloatingLabel controlId="procedencia" label="Procedencia">
-                      <Form.Control
-                        type="text"
-                        placeholder="Ingrese la procedencia"
-                        name="Procedencia"
-                        value={formData.Procedencia}
-                        onChange={handleFormChange}
-                      />
-                    </FloatingLabel>
-                  </Col>
-                </Row>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Cerrar
-          </Button>
-          <Button variant="primary" onClick={handleUpdate}>
-            Actualizar
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
-  );
-}
+              </thead>
+              <tbody>
+                {filteredClientes.map((cliente) => (
+                  <tr key={cliente.ID_cliente}>
+                    <td>{cliente.ID_cliente}</td>
+                    <td>{cliente.Cedula}</td>
+                    <td>{cliente.Nombre1}</td>
+                    <td>{cliente.Nombre2}</td>
+                    <td>{cliente.Apellido1}</td>
+                    <td>{cliente.Apellido2}</td>
+                    <td>{cliente.Telefono}</td>
+                    <td>{cliente.Procedencia}</td>
+                    <td>
+                    <Button className="update-button" onClick={() => openModal(cliente)}>Actualizar<FaPencil /></Button>
+<Button className="delete-button" onClick={() => handleDelete(cliente.ID_cliente, cliente.ID_Persona)}>Eliminar <FaTrashCan /></Button>
+<Button className="select-button" onClick={() => handleSelectCliente(cliente.ID_cliente, cliente.Nombre1, cliente.Apellido1)}>Seleccionar</Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Card.Body>
+        </Card>
+        <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title>Actualizar Cliente</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Card className="mt-3">
+              <Card.Body>
+                <Card.Title>Registro de Cliente</Card.Title>
+                <Form className="mt-3">
+                  <Row className="g-3">
+                    <Col sm="6" md="6" lg="4">
+                      <FloatingLabel controlId="cedula" label="Cedula">
+                        <Form.Control
+                          type="text"
+                          placeholder="Ingrese la Cedula"
+                          name="Cedula"
+                          value={formData.Cedula}
+                          onChange={handleFormChange}
+                        />
+                      </FloatingLabel>
+                    </Col>
+                    <Col sm="6" md="6" lg="4">
+                      <FloatingLabel controlId="nombre1" label="Primer Nombre">
+                        <Form.Control
+                          type="text"
+                          placeholder="Ingrese el primer nombre"
+                          name="Nombre1"
+                          value={formData.Nombre1}
+                          onChange={handleFormChange}
+                        />
+                      </FloatingLabel>
+                    </Col>
+                    <Col sm="6" md="6" lg="4">
+                      <FloatingLabel controlId="nombre2" label="Segundo Nombre">
+                        <Form.Control
+                          type="text"
+                          placeholder="Ingrese el segundo nombre"
+                          name="Nombre2"
+                          value={formData.Nombre2}
+                          onChange={handleFormChange}
+                        />
+                      </FloatingLabel>
+                    </Col>
+                    <Col sm="6" md="6" lg="4">
+                      <FloatingLabel controlId="apellido1" label="Primer apellido">
+                        <Form.Control
+                          type="text"
+                          placeholder="Ingrese el primer apellido"
+                          name="Apellido1"
+                          value={formData.Apellido1}
+                          onChange={handleFormChange}
+                        />
+                      </FloatingLabel>
+                    </Col>
+                    <Col sm="6" md="6" lg="4">
+                      <FloatingLabel controlId="apellido2" label="Segundo apellido">
+                        <Form.Control
+                          type="text"
+                          placeholder="Ingrese el segundo apellido"
+                          name="Apellido2"
+                          value={formData.Apellido2}
+                          onChange={handleFormChange}
+                        />
+                      </FloatingLabel>
+                    </Col>
+                    <Col sm="12" md="6" lg="4">
+                      <FloatingLabel controlId="telefono" label="Teléfono">
+                        <Form.Control
+                          type="number"
+                          placeholder="Ingrese el teléfono"
+                          name="Telefono"
+                          value={formData.Telefono}
+                          onChange={handleFormChange}
+                        />
+                      </FloatingLabel>
+                    </Col>
+                    <Col sm="12" md="6" lg="4">
+                      <FloatingLabel controlId="procedencia" label="Procedencia">
+                        <Form.Control
+                          type="text"
+                          placeholder="Ingrese la procedencia"
+                          name="Procedencia"
+                          value={formData.Procedencia}
+                          onChange={handleFormChange}
+                        />
+                      </FloatingLabel>
+                    </Col>
+                  </Row>
+                </Form>
+              </Card.Body>
+            </Card>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
+              Cerrar
+            </Button>
+            <Button variant="primary" onClick={handleUpdate}>
+              Actualizar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
+    );
+  }
+  
+  
 
 export default ClienteList;

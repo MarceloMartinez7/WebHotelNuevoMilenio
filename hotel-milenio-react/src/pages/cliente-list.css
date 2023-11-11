@@ -1,0 +1,26 @@
+/* Estilos para los botones */
+
+/* Estilos para los botones */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .update-button {
+    background-color: #007bff; /* Color azul para el botón de actualizar */
+    color: #fff;
+    margin-right: 5px; /* Agrega margen a la derecha del botón */
+  }
+  
+  .delete-button {
+    background-color: #dc3545; /* Color rojo para el botón de eliminar */
+    color: #fff;
+    margin-right: 5px; /* Agrega margen a la derecha del botón */
+  }
+  
+  .select-button {
+    background-color: #28a745; /* Color verde para el botón de seleccionar */
+    color: #fff;
+    margin-right: 5px; /* Agrega margen a la derecha del botón */
+  }
+  
