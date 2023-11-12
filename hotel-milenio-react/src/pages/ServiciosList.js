@@ -105,7 +105,7 @@ function ServicioList() {
 
     console.log("idServicios:", idServicios);
     
-    const confirmation = window.confirm('¿Seguro que deseas eliminar este Empleado?');
+    const confirmation = window.confirm('¿Seguro que deseas eliminar este Servicio?');
     if (confirmation) {
         // Realiza la solicitud DELETE al servidor para eliminar el empleado y la Persona
         fetch(`http://localhost:5000/crud/deleteServicio/${idServicios}`, {
