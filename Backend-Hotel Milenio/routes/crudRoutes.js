@@ -978,7 +978,40 @@ router.post('/login', (req, res) => {
 
     //-----------------------------------------------------------
 
-   
+   // Ruta para leer registros
+router.get('/RegistroEstadistica', (req, res) => {
+    // Utiliza la instancia de la base de datos pasada como parámetro
+    // Realizar una consulta SQL para obtener el total de reservaciones por día de la semana
+
+    const sql = `
+        SELECT
+            CASE DAYOFWEEK(F_entrada)
+                WHEN 1 THEN 'Domingo'
+                WHEN 2 THEN 'Lunes'
+                WHEN 3 THEN 'Martes'
+                WHEN 4 THEN 'Miércoles'
+                WHEN 5 THEN 'Jueves'
+                WHEN 6 THEN 'Viernes'
+                WHEN 7 THEN 'Sábado'
+            END AS DiaSemana,
+            COUNT(*) AS TotalReservaciones
+        FROM ReservacionEstancia
+        GROUP BY DiaSemana
+        ORDER BY MIN(DAYOFWEEK(F_entrada));
+    `;
+
+    // Ejecutar la consulta
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error al leer registro:', err);
+            res.status(500).json({ error: 'Error al leer registros' });
+        } else {
+            // Devolver los registros en formato JSON como respuesta
+            res.status(200).json(result);
+        }
+    });
+});
+
 
     // Otras rutas CRUD
     return router;
