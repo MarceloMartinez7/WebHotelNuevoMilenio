@@ -202,7 +202,7 @@ function HabitacionList() {
                   <td>{habitacion.Tipo_Habitacion}</td>
                   <td>{habitacion.Num_Cama}</td>
                   <td>{habitacion.Estado_Habitacion}</td>
-                  <td>{habitacion.Precio}</td>
+                  <td>C$ {habitacion.Precio}</td>
                   <td>
                     <img src={habitacion.Imagenes} alt={habitacion.Tipo_Habitacion} style={{ width: '150px' }} />
                   </td>

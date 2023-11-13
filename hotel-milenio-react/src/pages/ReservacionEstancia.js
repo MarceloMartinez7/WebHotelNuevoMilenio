@@ -294,7 +294,7 @@ function ReservacionEstancia() {
                             </Row>
                             <Row className="g-3">
                                 <Col sm="12" md="12" lg="12">
-                                    <FloatingLabel controlId="costoTotal" label="Costo Total a Pagar">
+                                    <FloatingLabel controlId="costoTotal" label="Costo Total a Pagar C$ ">
                                         <Form.Control
                                             type="text"
                                             value={calcularCostoEstancia()}
@@ -344,7 +344,7 @@ function ReservacionEstancia() {
                                 <td>{habitacion.NombreHabitacion}</td>
                                 <td>{habitacion.Num_Cama}</td>
                                 <td>{habitacion.EstadoHabitacion}</td>
-                                <td>{habitacion.Precio}</td>
+                                <td> C$ {habitacion.Precio}</td>
                                 <td>
                                     <Button
                                         variant="danger"

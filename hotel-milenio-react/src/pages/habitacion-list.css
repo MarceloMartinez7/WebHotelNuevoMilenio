@@ -7,11 +7,13 @@
   .update-button {
     background-color: #007bff; /* Color azul para el botón de actualizar */
     color: #fff;
+    margin-right: 5px;
   }
   
   .delete-button {
     background-color: #dc3545; /* Color rojo para el botón de eliminar */
     color: #fff;
+    margin-left: 5px;
   }
   
   .change-sucio-button {
