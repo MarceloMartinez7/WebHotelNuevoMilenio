@@ -64,18 +64,15 @@ function ReservacionEstancia() {
     const addHabitacionToTable = () => {
         if (Habitacion) {
             const habitacionSeleccionada = habitaciones.find(habitacion => habitacion.NombreHabitacion === Habitacion);
-
+    
             if (habitacionSeleccionada) {
-                if (habitacionSeleccionada.EstadoHabitacion !== "Ocupado") {
-                    setHabitacionesSeleccionadas([...habitacionesSeleccionadas, habitacionSeleccionada]);
-                    setHabitaciones(habitaciones.filter(habitacion => habitacion.ID_Habitacion !== habitacionSeleccionada.ID_Habitacion));
-                    setHabitacion('');
-                } else {
-                    alert('La habitación seleccionada está ocupada y no se puede agregar.');
-                }
+                setHabitacionesSeleccionadas([...habitacionesSeleccionadas, habitacionSeleccionada]);
+                setHabitaciones(habitaciones.filter(habitacion => habitacion.ID_Habitacion !== habitacionSeleccionada.ID_Habitacion));
+                setHabitacion('');
             }
         }
     };
+    
 
     const handleFechaSalidaChange = (e) => {
         const { name, value } = e.target;
@@ -132,9 +129,19 @@ function ReservacionEstancia() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Validar si las habitaciones seleccionadas están ocupadas
+        const habitacionOcupada = habitacionesSeleccionadas.some(habitacion => habitacion.EstadoHabitacion === "Ocupado");
+        
+        if (habitacionOcupada) {
+            alert('Una o más habitaciones seleccionadas están ocupadas y no se pueden registrar.');
+            return; // Evitar continuar con el registro
+        }
+        
         console.log('handleSubmit iniciado');
         console.log('formData:', formData);
         console.log('reservaData:', reservaData);
+    
         try {
             const response = await fetch('http://localhost:5000/crud/reservacionCreate', {
                 method: 'POST',
@@ -143,19 +150,18 @@ function ReservacionEstancia() {
                 },
                 body: JSON.stringify(reservaData),
             });
-
-
+    
             if (response.ok) {
                 alert('Registro exitoso');
             } else {
                 alert('No se pudo guardar la reserva. Por favor, inténtelo nuevamente.');
             }
-
         } catch (error) {
             console.error('Error al guardar la reserva', error);
             alert('Hubo un error al enviar la solicitud.');
         };
     };
+    
 
     return (
         <div>
