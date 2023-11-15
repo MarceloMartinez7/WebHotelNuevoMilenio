@@ -56,7 +56,19 @@
 
 
 
-
+/* LoginForm.css */
+.login-container {
+    background-image: url('../Imagenes/FondoHotelMIlenio.jpg'); /* Cambia el nombre y la ruta según tu imagen */
+    background-size: cover;
+    background-position: center;
+    height: 100vh; /* Ajusta la altura según tus necesidades */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Resto del CSS... */
+  
 
 
 /* .login-container {

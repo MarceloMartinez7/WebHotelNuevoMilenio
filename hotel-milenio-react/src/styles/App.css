@@ -46,3 +46,16 @@ font-family: 'Times New Roman', Times, serif;
  margin-top: 50px;
  font-family: Georgia, 'Times New Roman', Times, serif;
 }
+
+
+/* En tu archivo App.css o en otro archivo de estilos */
+.Informacion {
+  border-radius: 5px;
+  font-family: 'Times New Roman', Times, serif;
+  background-color: white;
+  text-align: justify; /* Centra el texto */
+  padding: 20px; /* Agrega espacio alrededor del texto */
+  border: 2px solid #ccc; /* Agrega un borde alrededor del cuadro */
+  max-width: 600px; /* Limita el ancho máximo del cuadro */
+  margin: 150px auto; /* Centra el cuadro en el medio */
+}
