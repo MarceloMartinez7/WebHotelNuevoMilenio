@@ -598,7 +598,7 @@ router.get('/ListarHabitaciones', (req, res) => {
 
 
 
-    // Ruta para leer registros de Habitación para el combo
+    // Ruta para leer registros de Habitación para el comb
     router.get('/ComboHabitacion', (req, res) => {
         const sql = 'SELECT Habitacion.ID_Habitacion, Habitacion.N_de_habitacion, Tipo_de_habitacion.Nombre AS NombreHabitacion, Habitacion.Num_Cama, Estado.NombreEstado AS EstadoHabitacion, Habitacion.Precio FROM Habitacion INNER JOIN Tipo_de_habitacion ON Habitacion.ID_tipoHabitacion = Tipo_de_habitacion.ID_tipoHabitacion INNER JOIN Estado ON Habitacion.ID_Estado = Estado.ID_Estado';
 
