@@ -307,6 +307,9 @@ function HabitacionList() {
                       />
                     </Form.Group>
                   </Col>
+
+
+                  
                 </Row>
               </Form>
             </Card.Body>
