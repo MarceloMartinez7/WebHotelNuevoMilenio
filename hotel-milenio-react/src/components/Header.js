@@ -34,6 +34,8 @@ function Header() {
                 <Link to="/about" className="link-unstyled">Información</Link>
               </Nav.Link>
 
+              
+
               <NavDropdown title="Clientes" id="clientes">
                 <NavDropdown.Item>
                   <Link to="/Cliente" className="link-unstyled">Registrar Cliente</Link>
@@ -91,10 +93,14 @@ function Header() {
             <NavDropdown title="Reportes" id="Reportes">
               <NavDropdown.Item>
                 <Link to="/Reportes" className="link-unstyled">Registrar Reportes</Link>
-              </NavDropdown.Item>
+              </NavDropdown.Item>    
               
+              
+
             </NavDropdown>
-              
+            <Nav.Link>
+                <Link to="/" className="link-unstyled">Cerrar Sesión</Link>
+              </Nav.Link>
 
             </Nav>
           </Navbar.Collapse>
@@ -173,8 +179,8 @@ function Header() {
               <NavDropdown.Item>
                 <Link to="/ListarServicios" className="link-unstyled">Listar Servicios</Link>
               </NavDropdown.Item>
+            
             </NavDropdown>
-
             
 
           </Nav>
