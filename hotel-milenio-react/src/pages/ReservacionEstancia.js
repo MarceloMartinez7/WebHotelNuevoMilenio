@@ -243,28 +243,28 @@ function ReservacionEstancia() {
                                     <div>
                                         <input
                                             type="radio"
-                                            id="reserva"
+                                            id="Reserva"
                                             name="TipoServicio"
-                                            value="reserva"
-                                            checked={formData.TipoServicio === "reserva"}
+                                            value="Reserva"
+                                            checked={formData.TipoServicio === "Reserva"}
                                             onChange={handleFormChange}
                                             style={{ display: 'inline-block', marginRight: '10px' }}
                                         />
-                                        <label htmlFor="reserva">Reserva</label>
+                                        <label htmlFor="Reserva">Reserva</label>
                                     </div>
 
 
                                     <div>
                                         <input
                                             type="radio"
-                                            id="estancia"
+                                            id="Estancia"
                                             name="TipoServicio"
-                                            value="estancia"
-                                            checked={formData.TipoServicio === "estancia"}
+                                            value="Estancia"
+                                            checked={formData.TipoServicio === "Estancia"}
                                             onChange={handleFormChange}
                                             style={{ display: 'inline-block', marginRight: '10px' }}
                                         />
-                                        <label htmlFor="estancia">Estancia</label>
+                                        <label htmlFor="Estancia">Estancia</label>
                                     </div>
 
 
