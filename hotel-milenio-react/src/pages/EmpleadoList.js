@@ -313,5 +313,5 @@ function EmpleadoList() {
       </Modal>
     </div>
   );
- }
+     }
 export default EmpleadoList;
