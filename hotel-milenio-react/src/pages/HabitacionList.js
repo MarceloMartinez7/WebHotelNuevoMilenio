@@ -181,7 +181,7 @@ function HabitacionList() {
       <Card className="m-3">
         <Card.Body>
           <Card.Title className="mb-3">Listado de Habitaciones</Card.Title>
-          <Table striped bordered hover>
+          <Table striped bordered hover responsive>
             <thead>
               <tr>
                 <th>ID</th>
