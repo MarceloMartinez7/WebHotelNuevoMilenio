@@ -230,9 +230,74 @@ function EmpleadoList() {
                         onChange={handleFormChange}
                       />
                     </FloatingLabel>
-                  </Col>
-                  {/* ... Otros campos del formulario ... */}
-                </Row>
+                </Col>
+                <Col sm="6" md="6" lg="4">
+                  <FloatingLabel controlId="nombre2" label="Segundo Nombre">
+                    <Form.Control
+                      type="text"
+                      placeholder="Ingrese el segundo nombre"
+                      name="Nombre2"
+                      value={formData.Nombre2}
+                      onChange={handleFormChange}
+                    />
+                  </FloatingLabel>
+                </Col>
+                <Col sm="6" md="6" lg="4">
+                  <FloatingLabel controlId="apellido1" label="Apellido Paterno">
+                    <Form.Control
+                      type="text"
+                      placeholder="Ingrese el apellido paterno"
+                      name="Apellido1"
+                      value={formData.Apellido1}
+                      onChange={handleFormChange}
+                    />
+                  </FloatingLabel>
+                </Col>
+                <Col sm="6" md="6" lg="4">
+                  <FloatingLabel controlId="apellido2" label="Apellido Materno">
+                    <Form.Control
+                      type="text"
+                      placeholder="Ingrese el apellido materno"
+                      name="Apellido2"
+                      value={formData.Apellido2}
+                      onChange={handleFormChange}
+                    />
+                  </FloatingLabel>
+                </Col>
+                <Col sm="6" md="6" lg="4">
+                  <FloatingLabel controlId="telefono" label="Teléfono">
+                    <Form.Control
+                      type="text"
+                      placeholder="Ingrese el teléfono"
+                      name="Telefono"
+                      value={formData.Telefono}
+                      onChange={handleFormChange}
+                    />
+                  </FloatingLabel>
+                </Col>
+                <Col sm="6" md="6" lg="4">
+                  <FloatingLabel controlId="usuario" label="Usuario">
+                    <Form.Control
+                      type="text"
+                      placeholder="Ingrese el usuario"
+                      name="Usuario"
+                      value={formData.Usuario}
+                      onChange={handleFormChange}
+                    />
+                  </FloatingLabel>
+                </Col>
+                <Col sm="6" md="6" lg="4">
+                  <FloatingLabel controlId="contraseña" label="Contraseña">
+                    <Form.Control
+                      type="password"
+                      placeholder="Ingrese la contraseña"
+                      name="Contraseña"
+                      value={formData.Contraseña}
+                      onChange={handleFormChange}
+                    />
+                  </FloatingLabel>
+                </Col>
+              </Row>
               </Form>
             </Card.Body>
           </Card>
@@ -248,5 +313,5 @@ function EmpleadoList() {
       </Modal>
     </div>
   );
- }
+     }
 export default EmpleadoList;
