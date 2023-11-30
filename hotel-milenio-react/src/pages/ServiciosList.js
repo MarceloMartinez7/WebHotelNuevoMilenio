@@ -45,7 +45,7 @@ function ServicioList() {
 
  
 
-  // Función para abrir el modal y pasar los datos del empleado seleccionado
+  // Función para abrir el modal ys pasar los datos del empleado seleccionado
   const openModal = (servicio) => {
     setSelectedServicios(servicio);
 
